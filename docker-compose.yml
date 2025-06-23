@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: flink
+      POSTGRES_PASSWORD: flink
+      POSTGRES_DB: metadata
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  flask-api:
+    build: ./flask-api
+    container_name: flask-api
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+
+  flink-jobmanager:
+    build:
+      context: ./flink-extensions
+    command: jobmanager
+    ports:
+      - "8081:8081"
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
+    volumes:
+      - ./flink-job:/opt/flink_jobs
+
+  flink-taskmanager:
+    image: flink:1.18-scala_2.12
+    command: taskmanager
+    depends_on:
+      - flink-jobmanager
+
+volumes:
+  pgdata:
