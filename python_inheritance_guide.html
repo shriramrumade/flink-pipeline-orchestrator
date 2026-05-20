@@ -1,0 +1,2303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Inheritance — Complete Reference Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;0,600;0,800;1,300;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<style>
+/* ═══ RESET & TOKENS ═══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 15px; }
+
+:root {
+  /* palette */
+  --ink:        #1a1c22;
+  --ink2:       #2e3140;
+  --ink3:       #444860;
+  --muted:      #6b6f88;
+  --faint:      #9094aa;
+  --rule:       #e2e4ed;
+  --paper:      #f8f8fb;
+  --white:      #ffffff;
+
+  /* accents */
+  --gold:       #c8860a;
+  --gold-lt:    #fdf3dc;
+  --gold-mid:   #f7e0a4;
+  --red:        #c0392b;
+  --red-lt:     #fdf0ef;
+  --red-mid:    #f9cbc7;
+  --blue:       #1d5fa8;
+  --blue-lt:    #eef4fc;
+  --blue-mid:   #bad4f5;
+  --green:      #1a7a45;
+  --green-lt:   #edfaf3;
+  --green-mid:  #a8e6c1;
+  --teal:       #116e7a;
+  --teal-lt:    #ecf9fb;
+  --teal-mid:   #9ee2eb;
+  --purple:     #6b28a8;
+  --purple-lt:  #f5effe;
+  --purple-mid: #d6b5f5;
+
+  /* severity */
+  --crit:       var(--red);
+  --crit-lt:    var(--red-lt);
+  --major:      var(--gold);
+  --major-lt:   var(--gold-lt);
+  --minor:      var(--blue);
+  --minor-lt:   var(--blue-lt);
+
+  /* type */
+  --ff-display: 'Fraunces', Georgia, serif;
+  --ff-body:    'DM Sans', sans-serif;
+  --ff-mono:    'IBM Plex Mono', 'Fira Code', monospace;
+
+  /* spacing */
+  --gap:  24px;
+  --gap2: 48px;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ff-body);
+  line-height: 1.65;
+}
+
+/* ═══ LAYOUT ══════════════════════════════════════════════════════════════ */
+.page-wrap {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+/* ═══ SIDEBAR ════════════════════════════════════════════════════════════= */
+.sidebar {
+  background: var(--ink);
+  color: var(--faint);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink2) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--ink2); }
+
+.sb-brand {
+  padding: 28px 22px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-shrink: 0;
+}
+.sb-badge {
+  display: inline-block;
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  background: var(--gold);
+  color: var(--ink);
+  padding: 3px 8px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+.sb-title {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--white);
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+.sb-meta {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.sb-search {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-shrink: 0;
+}
+.sb-search input {
+  width: 100%;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  padding: 7px 10px 7px 28px;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6f88' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 9px center;
+  transition: border-color .2s;
+}
+.sb-search input:focus { border-color: var(--gold); }
+.sb-search input::placeholder { color: var(--ink3); }
+
+.sb-nav { flex: 1; padding: 8px 0 20px; }
+
+.sb-section-label {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  padding: 14px 18px 4px;
+}
+.sb-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 18px;
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--muted);
+  border-left: 2px solid transparent;
+  transition: all .15s;
+  line-height: 1.4;
+}
+.sb-item:hover { color: var(--white); background: rgba(255,255,255,.04); }
+.sb-item.active {
+  color: var(--white);
+  border-left-color: var(--gold);
+  background: rgba(200,134,10,.1);
+}
+.sb-num {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--ink3);
+  flex-shrink: 0;
+  min-width: 22px;
+}
+.sb-item.active .sb-num { color: var(--gold); }
+
+/* ═══ MAIN ════════════════════════════════════════════════════════════════ */
+.main { min-width: 0; }
+
+/* cover */
+.cover {
+  background: var(--ink);
+  padding: 60px 56px 52px;
+  position: relative;
+  overflow: hidden;
+}
+.cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 40px,
+    rgba(255,255,255,.013) 40px,
+    rgba(255,255,255,.013) 41px
+  );
+  pointer-events: none;
+}
+.cover-kicker {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.cover-title {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: clamp(30px, 4vw, 52px);
+  color: var(--white);
+  line-height: 1.05;
+  margin-bottom: 8px;
+}
+.cover-title em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--gold);
+}
+.cover-sub {
+  font-family: var(--ff-display);
+  font-size: clamp(14px, 1.8vw, 20px);
+  font-weight: 300;
+  color: var(--faint);
+  margin-bottom: 28px;
+  font-style: italic;
+}
+.cover-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.cstat {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  padding: 6px 14px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 4px;
+  color: var(--faint);
+}
+.cstat strong { color: var(--white); font-weight: 600; }
+
+/* category grid */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.cat-cell {
+  background: rgba(255,255,255,.04);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.cat-cell:hover { background: rgba(255,255,255,.08); }
+.cat-cell-num {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: .1em;
+  margin-bottom: 4px;
+}
+.cat-cell-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.3;
+}
+.cat-cell-meta {
+  font-family: var(--ff-mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* usage box */
+.usage-box {
+  background: rgba(200,134,10,.12);
+  border: 1px solid rgba(200,134,10,.25);
+  border-radius: 6px;
+  padding: 18px 20px;
+  margin: 28px 56px 0;
+}
+.usage-box-title {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.usage-items {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 24px;
+}
+.usage-items li {
+  font-size: 12.5px;
+  color: var(--ink2);
+  padding-left: 14px;
+  position: relative;
+}
+.usage-items li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
+.sev-legend {
+  display: flex;
+  gap: 20px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(200,134,10,.2);
+  flex-wrap: wrap;
+}
+.sev-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--ff-mono);
+  font-size: 10.5px;
+  color: var(--ink2);
+}
+
+/* ═══ SECTION CONTAINER ════════════════════════════════════════════════════ */
+.section { padding: 48px 56px; border-bottom: 1px solid var(--rule); }
+.section:last-child { border-bottom: none; }
+
+.section-header { margin-bottom: 28px; }
+.section-number {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.section-title {
+  font-family: var(--ff-display);
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.15;
+  margin-bottom: 14px;
+}
+.section-intro {
+  font-size: 14.5px;
+  color: var(--ink3);
+  max-width: 740px;
+  line-height: 1.75;
+  border-left: 3px solid var(--rule);
+  padding-left: 18px;
+}
+
+/* checklist */
+.checklist-label {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 28px 0 12px;
+}
+.checklist {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 32px;
+}
+.checklist li {
+  font-size: 13px;
+  color: var(--ink2);
+  padding-left: 22px;
+  position: relative;
+  line-height: 1.5;
+}
+.checklist li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--rule);
+  border-radius: 3px;
+  background: var(--white);
+}
+.checklist li strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ═══ EXAMPLE BLOCK ════════════════════════════════════════════════════════ */
+.example { margin-top: 36px; }
+
+.sev-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.sev-critical { background: var(--red-lt); color: var(--red); border: 1px solid var(--red-mid); }
+.sev-major    { background: var(--gold-lt); color: var(--gold); border: 1px solid var(--gold-mid); }
+.sev-minor    { background: var(--blue-lt); color: var(--blue); border: 1px solid var(--blue-mid); }
+.sev-info     { background: var(--teal-lt); color: var(--teal); border: 1px solid var(--teal-mid); }
+.sev-tricky   { background: var(--purple-lt); color: var(--purple); border: 1px solid var(--purple-mid); }
+
+.ex-title {
+  font-family: var(--ff-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+/* "why it matters" box */
+.why-box {
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-mid);
+  border-left: 4px solid var(--blue);
+  border-radius: 0 6px 6px 0;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+.why-box-label {
+  font-family: var(--ff-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+.why-box em {
+  display: block;
+  margin-top: 8px;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+/* code comparison table */
+.code-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+.code-col { min-width: 0; }
+.code-col-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 600;
+}
+.code-col.bad  .code-col-header { background: var(--red-lt); color: var(--red); border-bottom: 1px solid var(--red-mid); }
+.code-col.good .code-col-header { background: var(--green-lt); color: var(--green); border-bottom: 1px solid var(--green-mid); border-left: 1px solid var(--rule); }
+.code-col.bad  pre { border-radius: 0; border-right: 1px solid var(--rule); }
+.code-col.good pre { border-radius: 0; border-left: 1px solid var(--rule); }
+
+/* annotations */
+.anno-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.anno-col { padding: 14px 16px; }
+.anno-col.bad  { background: #fffbfb; border-right: 1px solid var(--rule); }
+.anno-col.good { background: #f8fdfb; }
+.anno-col-label {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.anno-col.bad  .anno-col-label { color: var(--red); }
+.anno-col.good .anno-col-label { color: var(--green); }
+.anno-list { list-style: none; }
+.anno-list li {
+  font-size: 12.5px;
+  color: var(--ink2);
+  line-height: 1.6;
+  padding: 3px 0 3px 20px;
+  position: relative;
+}
+.anno-list li::before {
+  position: absolute;
+  left: 0;
+  font-size: 12px;
+  top: 3px;
+}
+.anno-col.bad  .anno-list li::before { content: '⚠'; }
+.anno-col.good .anno-list li::before { content: '✔'; color: var(--green); }
+
+/* key takeaways */
+.takeaways {
+  background: var(--ink);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-bottom: 8px;
+}
+.takeaways-label {
+  font-family: var(--ff-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.takeaways-list { list-style: none; }
+.takeaways-list li {
+  font-size: 12.5px;
+  color: var(--faint);
+  padding: 3px 0 3px 16px;
+  position: relative;
+  line-height: 1.6;
+}
+.takeaways-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-family: var(--ff-mono);
+}
+
+/* real-world impact */
+.impact-box {
+  background: #fffdf5;
+  border: 1px solid var(--gold-mid);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  padding: 12px 16px;
+  margin-top: 12px;
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--ink3);
+  line-height: 1.65;
+}
+.impact-box strong {
+  font-style: normal;
+  font-family: var(--ff-mono);
+  font-size: 9.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* single code block (no comparison) */
+.code-single {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.code-single-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 16px;
+  background: var(--ink2);
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--faint);
+}
+.copy-btn {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.1);
+  color: var(--faint);
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.copy-btn:hover { color: var(--white); border-color: rgba(255,255,255,.3); }
+.copy-btn.ok { color: var(--green); border-color: var(--green); }
+
+/* prism overrides */
+pre[class*="language-"] {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  font-family: var(--ff-mono) !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  background: #1a1c22 !important;
+  padding: 16px 18px !important;
+  max-height: 420px;
+  overflow-y: auto;
+}
+pre[class*="language-"]::-webkit-scrollbar { width: 5px; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+/* progress bar */
+#progress-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 1000;
+  background: transparent;
+}
+#progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), #f7c948);
+  width: 0;
+  transition: width .08s;
+}
+
+/* divider */
+.ex-divider {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 32px 0;
+}
+
+/* inline code */
+code.inline {
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  background: rgba(0,0,0,.06);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--blue);
+}
+
+@media (max-width: 900px) {
+  .page-wrap { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .cover { padding: 36px 24px; }
+  .section { padding: 32px 20px; }
+  .cat-grid { grid-template-columns: 1fr 1fr; }
+  .checklist { grid-template-columns: 1fr; }
+  .code-table { grid-template-columns: 1fr; }
+  .anno-table { grid-template-columns: 1fr; }
+  .usage-items { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<div class="page-wrap">
+
+<!-- ═══ SIDEBAR ═══════════════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-badge">🐍 Python OOP</div>
+    <div class="sb-title">Inheritance<br>Complete Reference</div>
+    <div class="sb-meta">80 sections · 2,828 lines</div>
+  </div>
+  <div class="sb-search"><input type="text" id="sbSearch" placeholder="Search sections…"></div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+
+<!-- ═══ MAIN ═══════════════════════════════════════════════════════════════ -->
+<main class="main" id="mainContent">
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-kicker">Python · Object-Oriented Programming</div>
+  <div class="cover-title">Inheritance<br><em>&amp; Beyond</em></div>
+  <div class="cover-sub">Complete Reference Guide</div>
+  <div class="cover-stats">
+    <div class="cstat"><strong>18</strong> inheritance patterns</div>
+    <div class="cstat"><strong>22</strong> tricky examples</div>
+    <div class="cstat"><strong>21</strong> bug analyses</div>
+    <div class="cstat"><strong>7</strong> static concepts</div>
+    <div class="cstat"><strong>12</strong> exception patterns</div>
+    <div class="cstat"><strong>2,828</strong> lines of code</div>
+  </div>
+
+  <div class="cat-grid">
+    <div class="cat-cell" onclick="scrollToSection('s1')">
+      <div class="cat-cell-num">01</div>
+      <div class="cat-cell-name">Single Inheritance</div>
+      <div class="cat-cell-meta">parent → child · super()</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s2')">
+      <div class="cat-cell-num">02</div>
+      <div class="cat-cell-name">Multilevel Inheritance</div>
+      <div class="cat-cell-meta">A → B → C chains</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s3')">
+      <div class="cat-cell-num">03</div>
+      <div class="cat-cell-name">Multiple Inheritance</div>
+      <div class="cat-cell-meta">MRO · C3 linearisation</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s4')">
+      <div class="cat-cell-num">04</div>
+      <div class="cat-cell-name">Abstract Base Classes</div>
+      <div class="cat-cell-meta">ABC · @abstractmethod</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s5')">
+      <div class="cat-cell-num">05</div>
+      <div class="cat-cell-name">Mixin Classes</div>
+      <div class="cat-cell-meta">reusable behaviour</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s6')">
+      <div class="cat-cell-num">06</div>
+      <div class="cat-cell-name">Diamond &amp; MRO</div>
+      <div class="cat-cell-meta">cooperative super()</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s7')">
+      <div class="cat-cell-num">07</div>
+      <div class="cat-cell-name">Static Concepts</div>
+      <div class="cat-cell-meta">@staticmethod · @classmethod</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s8')">
+      <div class="cat-cell-num">08</div>
+      <div class="cat-cell-name">Tricky Examples</div>
+      <div class="cat-cell-meta">22 non-obvious patterns</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s9')">
+      <div class="cat-cell-num">09</div>
+      <div class="cat-cell-name">Bug Analyses</div>
+      <div class="cat-cell-meta">21 wrong → right fixes</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s10')">
+      <div class="cat-cell-num">10</div>
+      <div class="cat-cell-name">Exception Handling</div>
+      <div class="cat-cell-meta">12 patterns in depth</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s11')">
+      <div class="cat-cell-num">11</div>
+      <div class="cat-cell-name">Advanced Patterns</div>
+      <div class="cat-cell-meta">descriptors · metaclasses</div>
+    </div>
+    <div class="cat-cell" onclick="scrollToSection('s12')">
+      <div class="cat-cell-num">12</div>
+      <div class="cat-cell-name">File Operations</div>
+      <div class="cat-cell-meta">text · JSON · CSV · pickle</div>
+    </div>
+  </div>
+</div>
+
+<!-- USAGE BOX -->
+<div class="usage-box">
+  <div class="usage-box-title">How to use this reference</div>
+  <ul class="usage-items">
+    <li>Each section opens with an introduction and complete review checklist</li>
+    <li>Each example shows: Why It Matters → Wrong Code → Annotations → Fixed Code</li>
+    <li>Tricky examples highlight non-obvious Python OOP behaviours</li>
+    <li>Bug analyses show wrong pattern, explain why, and give the correct fix</li>
+    <li>Technologies: ABC, dataclasses, descriptors, metaclasses, contextlib</li>
+    <li>File ops: text, binary, JSON, CSV, pickle, shelve, pathlib, tempfile</li>
+  </ul>
+  <div class="sev-legend">
+    <div class="sev-item"><span class="sev-badge sev-critical">CRITICAL</span> must understand before writing any OOP</div>
+    <div class="sev-item"><span class="sev-badge sev-major">MAJOR</span> important — common source of bugs</div>
+    <div class="sev-item"><span class="sev-badge sev-tricky">TRICKY</span> non-obvious — surprises experienced devs</div>
+    <div class="sev-item"><span class="sev-badge sev-info">INFO</span> good to know</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 1 — SINGLE INHERITANCE -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <div class="section-number">Section 01</div>
+    <h2 class="section-title">Single Inheritance</h2>
+    <p class="section-intro">
+      The simplest form: one child class inherits from exactly one parent. Python's <code class="inline">super()</code> call delegates to the parent's method through the MRO chain. Always call <code class="inline">super().__init__()</code> first — skipping it silently discards all parent-set attributes.
+    </p>
+  </div>
+
+  <div class="checklist-label">Review checklist</div>
+  <ul class="checklist">
+    <li><strong>super().__init__()</strong> called in every child <code class="inline">__init__</code></li>
+    <li><strong>Method overrides</strong> intentionally replace parent behaviour</li>
+    <li><strong>Parent attributes</strong> accessible on child instances</li>
+    <li><strong>isinstance()</strong> returns True for parent and child</li>
+    <li><strong>type()</strong> returns only the concrete class</li>
+    <li><strong>__str__ / __repr__</strong> use <code class="inline">self.__class__.__name__</code></li>
+  </ul>
+
+  <!-- Example 1 -->
+  <div class="example">
+    <div class="sev-badge sev-critical">CRITICAL</div>
+    <div class="ex-title">The basic contract — parent, child, and super()</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      Single inheritance is the foundation of all OOP in Python. Getting <code class="inline">super().__init__()</code> wrong, or skipping it entirely, is the most common beginner mistake and silently breaks all parent-set attributes. Every other pattern in this guide builds on this contract.
+      <em>This pattern appears in nearly every Python class ever written. Mastering it eliminates an entire category of AttributeError bugs.</em>
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;Problematic code</div>
+        <pre class="language-python"><code class="language-python">class Animal:
+    def __init__(self, name: str, age: int):
+        self.name = name
+        self.age  = age
+
+    def breathe(self):
+        return f"{self.name} breathes."
+
+
+class Dog(Animal):
+    def __init__(self, name: str, age: int, breed: str):
+        # Missing super().__init__()!
+        self.breed = breed
+
+    def speak(self):
+        return f"{self.name} says: Woof!"  # AttributeError!
+
+    def breathe(self):
+        # Overrides parent — but self.name doesn't exist
+        return f"{self.name} pants."
+
+
+dog = Dog("Rex", 5, "Lab")
+print(dog.name)   # AttributeError: 'Dog' has no attribute 'name'</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;Fixed code</div>
+        <pre class="language-python"><code class="language-python">class Animal:
+    kingdom = "Animalia"   # class variable — shared
+
+    def __init__(self, name: str, age: int):
+        self.name = name          # instance variable
+        self.age  = age
+
+    def breathe(self):
+        return f"{self.name} breathes."
+
+    def __str__(self):
+        return f"{self.__class__.__name__}(name={self.name})"
+
+
+class Dog(Animal):
+    def __init__(self, name: str, age: int, breed: str):
+        super().__init__(name, age)  # ← ALWAYS first
+        self.breed = breed
+
+    def speak(self):
+        return f"{self.name} says: Woof!"
+
+    def breathe(self):              # intentional override
+        return f"{self.name} pants and breathes."
+
+
+dog = Dog("Rex", 5, "Labrador")
+print(dog.name)              # Rex — parent attr present
+print(dog.speak())           # Rex says: Woof!
+print(isinstance(dog, Animal))  # True — chain check
+print(type(dog) is Animal)   # False — exact type only</code></pre>
+      </div>
+    </div>
+    <div class="anno-table">
+      <div class="anno-col bad">
+        <div class="anno-col-label">⚠ What is wrong</div>
+        <ul class="anno-list">
+          <li>Missing <code class="inline">super().__init__()</code> — parent's <code class="inline">self.name</code> and <code class="inline">self.age</code> never set</li>
+          <li>Every method that touches <code class="inline">self.name</code> raises <code class="inline">AttributeError</code> at runtime</li>
+          <li>No error at class definition time — bug only surfaces when method is called</li>
+          <li>Overriding <code class="inline">breathe()</code> without parent state means the override can't use parent attrs</li>
+        </ul>
+      </div>
+      <div class="anno-col good">
+        <div class="anno-col-label">✔ Why the fix works</div>
+        <ul class="anno-list">
+          <li><code class="inline">super().__init__(name, age)</code> delegates to Animal's <code class="inline">__init__</code> — all parent attrs created</li>
+          <li>Child then adds its own <code class="inline">self.breed</code> — both parent and child state coexist</li>
+          <li><code class="inline">isinstance(dog, Animal)</code> is True — the whole chain is traversed</li>
+          <li><code class="inline">self.__class__.__name__</code> in <code class="inline">__str__</code> prints the actual concrete class, not the defining class</li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>Always call <code class="inline">super().__init__()</code> as the very first line in a child's <code class="inline">__init__</code></li>
+        <li>Method overriding replaces the parent's version — use <code class="inline">super().method()</code> to extend it instead</li>
+        <li>Use <code class="inline">isinstance(obj, ParentClass)</code> for type checks — never <code class="inline">type(obj) == ParentClass</code></li>
+        <li>Class variables (like <code class="inline">kingdom</code>) are shared across all instances — instance variables are per-object</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 2 — MULTILEVEL -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <div class="section-number">Section 02</div>
+    <h2 class="section-title">Multilevel Inheritance</h2>
+    <p class="section-intro">
+      A chain of three or more classes — A → B → C → D. Each level inherits all attributes and methods of every ancestor. Python's MRO ensures <code class="inline">super()</code> calls traverse the chain in order without calling any class twice.
+    </p>
+  </div>
+
+  <div class="checklist-label">Review checklist</div>
+  <ul class="checklist">
+    <li><strong>Each level</strong> calls <code class="inline">super().__init__()</code> to propagate init chain</li>
+    <li><strong>Chains deeper than 3</strong> are a smell — consider composition instead</li>
+    <li><strong>Grandparent methods</strong> accessible via normal attribute lookup</li>
+    <li><strong>__mro__</strong> attribute shows the full resolution order</li>
+  </ul>
+
+  <div class="example">
+    <div class="sev-badge sev-major">MAJOR</div>
+    <div class="ex-title">Four-level chain — LivingThing → Vertebrate → Mammal → Whale</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      Each level in a multilevel chain must cooperatively call <code class="inline">super().__init__()</code>. If any level skips it, all ancestors above that point lose their initialisation — and no Python error is raised until you access a missing attribute.
+    </div>
+    <div class="code-single">
+      <div class="code-single-header">
+        <span>python — multilevel_inheritance.py</span>
+        <button class="copy-btn" onclick="copyCode(this, `class LivingThing:\n    def __init__(self, lifespan: int):\n        self.lifespan = lifespan\n\n    def is_alive(self): return True\n\nclass Vertebrate(LivingThing):\n    def __init__(self, lifespan: int):\n        super().__init__(lifespan)   # → LivingThing\n        self.has_spine = True\n\n    def describe_skeleton(self):\n        return 'Has an internal skeleton.'\n\nclass Mammal(Vertebrate):\n    def __init__(self, lifespan: int):\n        super().__init__(lifespan)   # → Vertebrate → LivingThing\n        self.warm_blooded = True\n\n    def feed_young(self): return 'Feeds young with milk.'\n\nclass Whale(Mammal):\n    def __init__(self, species: str):\n        super().__init__(lifespan=80)  # → entire chain\n        self.species = species\n\n    def dive(self, depth_m: int):\n        return f'{self.species} dives {depth_m}m.'\n\nw = Whale('Blue Whale')\nprint(w.dive(500))          # Blue Whale dives 500m.\nprint(w.feed_young())       # Feeds young with milk.\nprint(w.describe_skeleton())# Has an internal skeleton.\nprint(w.is_alive())         # True\nprint(w.lifespan)           # 80 — set by LivingThing\nprint(Whale.__mro__)`)>Copy</button>
+      </div>
+      <pre class="language-python"><code class="language-python">class LivingThing:
+    def __init__(self, lifespan: int):
+        self.lifespan = lifespan
+
+    def is_alive(self): return True
+
+
+class Vertebrate(LivingThing):
+    def __init__(self, lifespan: int):
+        super().__init__(lifespan)   # → LivingThing
+        self.has_spine = True
+
+    def describe_skeleton(self):
+        return "Has an internal skeleton."
+
+
+class Mammal(Vertebrate):
+    def __init__(self, lifespan: int):
+        super().__init__(lifespan)   # → Vertebrate → LivingThing
+        self.warm_blooded = True
+
+    def feed_young(self): return "Feeds young with milk."
+
+
+class Whale(Mammal):
+    def __init__(self, species: str):
+        super().__init__(lifespan=80)  # triggers entire chain
+        self.species = species
+
+    def dive(self, depth_m: int):
+        return f"{self.species} dives {depth_m}m."
+
+
+w = Whale("Blue Whale")
+print(w.dive(500))           # Blue Whale dives 500m.
+print(w.feed_young())        # Feeds young with milk.
+print(w.describe_skeleton()) # Has an internal skeleton.
+print(w.is_alive())          # True
+print(w.lifespan)            # 80 — set by LivingThing.__init__
+print(Whale.__mro__)
+# (<class 'Whale'>, <class 'Mammal'>, <class 'Vertebrate'>,
+#  <class 'LivingThing'>, <class 'object'>)</code></pre>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>Every level must call <code class="inline">super().__init__()</code> — one broken link silently drops all ancestors above it</li>
+        <li>Whale only calls <code class="inline">super().__init__(lifespan=80)</code> once — Python's MRO threads it through all 3 ancestors</li>
+        <li>All ancestor methods are available on the deepest child without any extra imports</li>
+        <li>Inspect <code class="inline">ClassName.__mro__</code> to understand the full resolution order at any time</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 3 — MULTIPLE INHERITANCE & MRO -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <div class="section-number">Section 03</div>
+    <h2 class="section-title">Multiple Inheritance &amp; MRO</h2>
+    <p class="section-intro">
+      One child inherits from two or more parents simultaneously. Python solves method conflicts with the <strong>C3 linearisation algorithm</strong> (MRO). The diamond problem — where a base class would otherwise be initialised twice — is eliminated by cooperative <code class="inline">super()</code> usage throughout the chain.
+    </p>
+  </div>
+
+  <div class="checklist-label">Review checklist</div>
+  <ul class="checklist">
+    <li><strong>All parents</strong> use cooperative <code class="inline">super()</code>, not hardcoded parent names</li>
+    <li><strong>MRO inspected</strong> with <code class="inline">ClassName.__mro__</code> or <code class="inline">help(ClassName)</code></li>
+    <li><strong>Mixin base class order</strong> in the class definition matches intended priority</li>
+    <li><strong>Diamond base</strong> initialised exactly once — confirmed by MRO</li>
+    <li><strong>Conflicting method names</strong> in mixins resolved by MRO order, not magic</li>
+    <li><strong>**kwargs forwarding</strong> used for compatible multi-parent <code class="inline">__init__</code></li>
+  </ul>
+
+  <div class="example">
+    <div class="sev-badge sev-critical">CRITICAL</div>
+    <div class="ex-title">Diamond inheritance — Base called exactly once via cooperative super()</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      In a diamond hierarchy (Left and Right both inherit Base, Child inherits both), hardcoded <code class="inline">Base.__init__(self)</code> inside Left causes Base to be initialised <em>twice</em> — once from Left and once from Right. Cooperative <code class="inline">super()</code> guarantees every class in the chain is called exactly once, in MRO order.
+      <em>This is the single most misunderstood concept in Python OOP. Getting it wrong causes duplicate initialisation, duplicate side effects, and silent state corruption.</em>
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;Hardcoded calls — Base initialised twice</div>
+        <pre class="language-python"><code class="language-python">class Base:
+    def __init__(self):
+        print("Base.__init__")   # prints TWICE!
+        self.value = 0
+
+class Left(Base):
+    def __init__(self):
+        Base.__init__(self)   # hardcoded — bypasses MRO
+        self.left = 1
+
+class Right(Base):
+    def __init__(self):
+        Base.__init__(self)   # hardcoded — called again!
+        self.right = 2
+
+class Child(Left, Right):    # MRO: Child→Left→Right→Base
+    def __init__(self):
+        Left.__init__(self)
+        Right.__init__(self)  # Base.__init__ fires again!
+
+Child()
+# Base.__init__   ← from Left
+# Base.__init__   ← from Right (duplicate!)</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;Cooperative super() — Base called once</div>
+        <pre class="language-python"><code class="language-python">class Base:
+    def __init__(self):
+        print("Base.__init__")   # prints ONCE
+        super().__init__()
+        self.value = 0
+
+class Left(Base):
+    def __init__(self):
+        print("Left.__init__")
+        super().__init__()   # MRO: next is Right, then Base
+        self.left = 1
+
+class Right(Base):
+    def __init__(self):
+        print("Right.__init__")
+        super().__init__()   # MRO: next is Base
+        self.right = 2
+
+class Child(Left, Right):   # MRO: Child→Left→Right→Base
+    def __init__(self):
+        print("Child.__init__")
+        super().__init__()  # threads through entire MRO
+
+Child()
+# Child.__init__
+# Left.__init__
+# Right.__init__  ← super() in Left called Right, not Base!
+# Base.__init__   ← exactly once</code></pre>
+      </div>
+    </div>
+    <div class="anno-table">
+      <div class="anno-col bad">
+        <div class="anno-col-label">⚠ What is wrong</div>
+        <ul class="anno-list">
+          <li>Hardcoded <code class="inline">Base.__init__(self)</code> in Left and Right bypasses the MRO chain entirely</li>
+          <li>Base is initialised twice — any side effects (DB connection, file open) run twice</li>
+          <li>C class in the diamond (Right) is silently skipped if Left calls Base directly</li>
+          <li>Adding a new class to the hierarchy silently breaks all existing hardcoded calls</li>
+        </ul>
+      </div>
+      <div class="anno-col good">
+        <div class="anno-col-label">✔ Why the fix works</div>
+        <ul class="anno-list">
+          <li><code class="inline">super()</code> in each class calls the <em>next in MRO</em>, not the hardcoded parent</li>
+          <li>MRO for Child: Child → Left → Right → Base → object — every class called exactly once</li>
+          <li>Adding a new class anywhere only requires inserting it in the MRO — all <code class="inline">super()</code> calls adapt automatically</li>
+          <li>Python's C3 linearisation guarantees a consistent, conflict-free resolution order</li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>Use <code class="inline">super()</code> everywhere in a multi-inheritance chain — never hardcode parent class names in <code class="inline">__init__</code></li>
+        <li>In a diamond, <code class="inline">super()</code> in Left calls Right (not Base directly) — this is the whole point of MRO</li>
+        <li>Print <code class="inline">ClassName.__mro__</code> to verify the resolution order before debugging</li>
+        <li>Mixin class order in <code class="inline">class Child(A, B, C)</code> determines which A/B/C method wins on conflict</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 4 — ABSTRACT BASE CLASSES -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <div class="section-number">Section 04</div>
+    <h2 class="section-title">Abstract Base Classes</h2>
+    <p class="section-intro">
+      <code class="inline">ABC</code> + <code class="inline">@abstractmethod</code> enforce a contract: any concrete subclass <em>must</em> implement every abstract method, or Python raises <code class="inline">TypeError</code> at instantiation time — not at call time. This transforms runtime errors into class-definition errors.
+    </p>
+  </div>
+
+  <div class="checklist-label">Review checklist</div>
+  <ul class="checklist">
+    <li><strong>All abstract methods</strong> implemented by every concrete subclass</li>
+    <li><strong>ABC itself</strong> cannot be instantiated — confirmed with a test</li>
+    <li><strong>Concrete methods</strong> in ABC provide shared logic all children use</li>
+    <li><strong>@abstractmethod</strong> used instead of <code class="inline">raise NotImplementedError</code></li>
+    <li><strong>@abstractclassmethod</strong> / <strong>@abstractstaticmethod</strong> for class/static contracts</li>
+    <li><strong>isinstance(obj, ABCName)</strong> works for checking protocol compliance</li>
+  </ul>
+
+  <div class="example">
+    <div class="sev-badge sev-critical">CRITICAL</div>
+    <div class="ex-title">raise NotImplementedError vs @abstractmethod — enforcement timing</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      Using <code class="inline">raise NotImplementedError</code> in a base method only fails at <em>call time</em>. An object can be created, passed around, and stored — only failing when the method is actually invoked. <code class="inline">@abstractmethod</code> fails at <em>instantiation time</em>, immediately — turning a runtime surprise into a class-definition guarantee.
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;raise NotImplementedError — too late</div>
+        <pre class="language-python"><code class="language-python">class Shape:
+    def area(self) -> float:
+        raise NotImplementedError("subclasses must implement")
+    def perimeter(self) -> float:
+        raise NotImplementedError("subclasses must implement")
+
+class BrokenCircle(Shape):
+    pass  # forgot to implement area() and perimeter()
+
+# No error here — object created successfully!
+c = BrokenCircle()
+# Error only surfaces here, much later:
+c.area()  # NotImplementedError: subclasses must implement</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;@abstractmethod — fails at class instantiation</div>
+        <pre class="language-python"><code class="language-python">import math
+from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    def __init__(self, color: str = "white"):
+        self.color = color
+
+    @abstractmethod
+    def area(self) -> float: ...
+
+    @abstractmethod
+    def perimeter(self) -> float: ...
+
+    # Concrete method — shared by ALL subclasses for free
+    def describe(self) -> str:
+        return (f"{type(self).__name__} | color={self.color} | "
+                f"area={self.area():.2f} | perim={self.perimeter():.2f}")
+
+class Circle(Shape):
+    def __init__(self, r: float, color: str = "white"):
+        super().__init__(color); self.r = r
+    def area(self): return math.pi * self.r ** 2
+    def perimeter(self): return 2 * math.pi * self.r
+
+# TypeError immediately — can't miss it:
+Shape()  # TypeError: Can't instantiate abstract class Shape
+Circle(5, "red").describe()  # works perfectly</code></pre>
+      </div>
+    </div>
+    <div class="anno-table">
+      <div class="anno-col bad">
+        <div class="anno-col-label">⚠ What is wrong</div>
+        <ul class="anno-list">
+          <li>Object created successfully even when required methods are missing</li>
+          <li>Error only fires when the missing method is actually called — potentially in production</li>
+          <li>No way to enforce the contract at class definition or test time</li>
+          <li>Forgetting one method in a large subclass is easy — silent until invoked</li>
+        </ul>
+      </div>
+      <div class="anno-col good">
+        <div class="anno-col-label">✔ Why the fix works</div>
+        <ul class="anno-list">
+          <li>TypeError raised at <code class="inline">Shape()</code> or any subclass that doesn't implement both methods</li>
+          <li>Concrete methods in ABC (like <code class="inline">describe()</code>) are inherited for free by all subclasses</li>
+          <li><code class="inline">@abstractmethod</code> + <code class="inline">...</code> body is idiomatic — the <code class="inline">...</code> serves as the docstring placeholder</li>
+          <li><code class="inline">isinstance(Circle(5), Shape)</code> → True — ABC registers the type relationship</li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>Always use <code class="inline">ABC</code> + <code class="inline">@abstractmethod</code> instead of <code class="inline">raise NotImplementedError</code> for interface contracts</li>
+        <li>ABCs can have concrete methods — useful for shared logic that all subclasses need</li>
+        <li><code class="inline">@staticmethod @abstractmethod</code> (stack both decorators) enforces static method contracts</li>
+        <li>Run <code class="inline">issubclass(MyClass, Shape)</code> in tests to verify your class hierarchy is correctly structured</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 5 — MIXIN CLASSES -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <div class="section-number">Section 05</div>
+    <h2 class="section-title">Mixin Classes</h2>
+    <p class="section-intro">
+      Mixins provide reusable, optional behaviour without being standalone parents. They are designed to be combined with other classes, not instantiated directly. The order of mixins in the class definition determines which mixin's method wins in a conflict.
+    </p>
+  </div>
+
+  <div class="checklist-label">Review checklist</div>
+  <ul class="checklist">
+    <li><strong>Mixin names</strong> end in <code class="inline">Mixin</code> by convention (SerializeMixin, LogMixin)</li>
+    <li><strong>Mixins don't call super().__init__()</strong> unless they add state</li>
+    <li><strong>Mixin order</strong> in the class list determines priority: leftmost wins</li>
+    <li><strong>No circular dependency</strong> between mixin and the class using it</li>
+    <li><strong>Multiple mixins</strong> on one class are fine — they stack cleanly via MRO</li>
+    <li><strong>Mixin methods</strong> only use attributes the target class is expected to have</li>
+  </ul>
+
+  <div class="example">
+    <div class="sev-badge sev-major">MAJOR</div>
+    <div class="ex-title">Mixin ordering changes behaviour — leftmost wins on conflict</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      When two mixins define the same method name, the one listed first in the class definition wins. This is not random — it is determined by Python's MRO. Developers who swap mixin order expecting the same result will get silently different behaviour.
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;Mixin order not considered</div>
+        <pre class="language-python"><code class="language-python">class JSONSave:
+    def save(self): return "Saving as JSON"
+
+class DBSave:
+    def save(self): return "Saving to Database"
+
+# Developer swaps order thinking it doesn't matter:
+class Report(DBSave, JSONSave):  # DBSave first
+    pass
+
+class Archive(JSONSave, DBSave): # JSONSave first
+    pass
+
+print(Report().save())   # "Saving to Database"
+print(Archive().save())  # "Saving as JSON"
+# Same two mixins, different result — easy to miss in review</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;Intentional ordering with explicit override</div>
+        <pre class="language-python"><code class="language-python">class SerializeMixin:
+    # Provides JSON serialisation to any class.
+    def to_dict(self) -> dict: return self.__dict__
+    def to_json(self) -> str:
+        import json; return json.dumps(self.to_dict(), indent=2)
+
+class LogMixin:
+    # Provides logging to any class.
+    _log: list = []
+    def log(self, msg: str):
+        entry = f"[{type(self).__name__}] {msg}"
+        self._log.append(entry); print(entry)
+
+class Employee(SerializeMixin, LogMixin):
+    # Explicitly ordered: serialise takes precedence.
+    def __init__(self, id: int, name: str, salary: float):
+        self.id = id; self.name = name; self.salary = salary
+    def give_raise(self, pct: float):
+        self.salary *= (1 + pct / 100)
+        self.log(f"Raise {pct}%. New salary: {self.salary:.2f}")
+
+e = Employee(1, "Alice", 60_000)
+e.give_raise(10)
+print(e.to_json())  # serialises all fields</code></pre>
+      </div>
+    </div>
+    <div class="anno-table">
+      <div class="anno-col bad">
+        <div class="anno-col-label">⚠ What is wrong</div>
+        <ul class="anno-list">
+          <li>Swapping mixin order silently changes which <code class="inline">save()</code> is called — no error or warning</li>
+          <li>Code review may not catch this — both orderings are syntactically valid</li>
+          <li>When mixins have different <code class="inline">__init__</code> signatures, wrong order causes wrong args being passed</li>
+        </ul>
+      </div>
+      <div class="anno-col good">
+        <div class="anno-col-label">✔ Why the fix works</div>
+        <ul class="anno-list">
+          <li>Each mixin has a clear, single responsibility — no conflicting method names</li>
+          <li>When conflict is unavoidable, document the intended order explicitly in the class docstring</li>
+          <li>Inspecting <code class="inline">Employee.__mro__</code> shows exactly which class wins for each method</li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>Mixin order in <code class="inline">class Child(MixinA, MixinB, Base)</code> is intentional — leftmost takes precedence</li>
+        <li>Name mixins with the <code class="inline">Mixin</code> suffix so readers know they're not standalone classes</li>
+        <li>Keep mixins stateless where possible — mixins that add state make cooperative <code class="inline">__init__</code> required</li>
+        <li>Test mixin combinations explicitly — MRO surprises only appear when method names collide</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 6 — TRICKY EXAMPLES (selected highlights) -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <div class="section-number">Section 08</div>
+    <h2 class="section-title">Tricky Examples</h2>
+    <p class="section-intro">
+      22 non-obvious inheritance behaviours that surprise even experienced Python developers. Each example is a minimal, runnable demonstration with explanation.
+    </p>
+  </div>
+
+  <!-- Tricky 1 -->
+  <div class="example">
+    <div class="sev-badge sev-tricky">TRICKY 1</div>
+    <div class="ex-title">Class variable mutation trap — shared list across all instances</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      A mutable class variable (list, dict) is shared across ALL instances. Calling <code class="inline">self.items.append(x)</code> mutates the class-level object — it does NOT create a per-instance list. This is one of the most common beginner Python bugs.
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;Shared mutable class variable</div>
+        <pre class="language-python"><code class="language-python">class SharedList:
+    items = []   # shared across ALL instances!
+
+    def add(self, item):
+        self.items.append(item)  # mutates class-level list
+
+a = SharedList(); b = SharedList()
+a.add("x"); b.add("y")
+print(a.items)   # ['x', 'y']  ← WRONG: b's item is here!
+print(b.items)   # ['x', 'y']  ← same object!</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;Instance variable in __init__</div>
+        <pre class="language-python"><code class="language-python">class SafeList:
+    def __init__(self):
+        self.items = []   # new list per instance
+
+    def add(self, item):
+        self.items.append(item)
+
+c = SafeList(); d = SafeList()
+c.add("x"); d.add("y")
+print(c.items)   # ['x']  ← correct: independent
+print(d.items)   # ['y']  ← independent</code></pre>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>Class variables are shared — only use them for constants or counters you want shared (like <code class="inline">_count</code>)</li>
+        <li>Mutable defaults (list, dict, set) must always be created in <code class="inline">__init__</code> as instance variables</li>
+        <li>This applies equally to function default arguments: <code class="inline">def f(x, items=[])</code> is the same bug</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="ex-divider">
+
+  <!-- Tricky 2 -->
+  <div class="example">
+    <div class="sev-badge sev-tricky">TRICKY 2</div>
+    <div class="ex-title">super() follows MRO, not the named parent — the cooperative chain surprise</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      In a diamond hierarchy, <code class="inline">super()</code> inside B2 does NOT call A2 directly — it calls the <em>next class in the MRO of the final class</em>, which is C2. This is counterintuitive until you understand that <code class="inline">super()</code> is about MRO position, not parent relationship.
+    </div>
+    <div class="code-single">
+      <div class="code-single-header"><span>python — super_mro_surprise.py</span>
+        <button class="copy-btn" onclick="copyCode(this, '')">Copy</button></div>
+      <pre class="language-python"><code class="language-python">class A2:
+    def hello(self):
+        print("A2.hello")
+
+class B2(A2):
+    def hello(self):
+        print("B2.hello")
+        super().hello()  # Does NOT call A2 directly!
+                         # Calls whatever is next in D2's MRO
+
+class C2(A2):
+    def hello(self):
+        print("C2.hello")
+        super().hello()
+
+class D2(B2, C2):
+    def hello(self):
+        print("D2.hello")
+        super().hello()
+
+# MRO: D2 → B2 → C2 → A2
+D2().hello()
+# D2.hello
+# B2.hello
+# C2.hello   ← super() in B2 called C2, NOT A2!
+# A2.hello
+
+print([c.__name__ for c in D2.__mro__])
+# ['D2', 'B2', 'C2', 'A2', 'object']</code></pre>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li><code class="inline">super()</code> means "next in the MRO of the actual concrete class", not "my declared parent"</li>
+        <li>This is why cooperative <code class="inline">super()</code> works — every class in the chain gets called exactly once</li>
+        <li>Always inspect <code class="inline">D2.__mro__</code> when debugging unexpected super() call order</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="ex-divider">
+
+  <!-- Tricky 3 -->
+  <div class="example">
+    <div class="sev-badge sev-tricky">TRICKY 3</div>
+    <div class="ex-title">Inheriting from built-in types — list, dict, int</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      Python built-in types are fully subclassable. You can create a <code class="inline">list</code> that caps its size, a <code class="inline">dict</code> that auto-lowercases keys, or an <code class="inline">int</code> with extra methods — without wrapping or composition.
+    </div>
+    <div class="code-single">
+      <div class="code-single-header"><span>python — builtin_subclassing.py</span>
+        <button class="copy-btn" onclick="copyCode(this, '')">Copy</button></div>
+      <pre class="language-python"><code class="language-python">class CappedList(list):
+    # A list that silently ignores appends beyond max size.
+    def __init__(self, max_size: int):
+        super().__init__()
+        self.max_size = max_size
+
+    def append(self, item):
+        if len(self) < self.max_size:
+            super().append(item)   # delegate to list.append
+        else:
+            print(f"  CappedList full ({self.max_size}), ignoring {item!r}")
+
+cl = CappedList(3)
+for i in range(5): cl.append(i)
+print(cl)  # [0, 1, 2]
+
+
+class LowerDict(dict):
+    # A dict that lower-cases all string keys automatically.
+    def __setitem__(self, key, value):
+        super().__setitem__(key.lower() if isinstance(key, str) else key, value)
+
+    def __getitem__(self, key):
+        return super().__getitem__(key.lower() if isinstance(key, str) else key)
+
+ld = LowerDict()
+ld["Name"] = "Alice"; ld["AGE"] = 30
+print(dict(ld))    # {'name': 'Alice', 'age': 30}
+print(ld["NAME"])  # Alice</code></pre>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>Subclassing builtins is idiomatic Python — use <code class="inline">super().method()</code> to delegate to the original implementation</li>
+        <li>Override only the specific dunder you need — all other list/dict behaviour is inherited for free</li>
+        <li>Note: <code class="inline">UserList</code> and <code class="inline">UserDict</code> in <code class="inline">collections</code> are easier to subclass safely if you need full override control</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 7 — BUG ANALYSES (selected highlights) -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s9">
+  <div class="section-header">
+    <div class="section-number">Section 09</div>
+    <h2 class="section-title">Bug Analyses</h2>
+    <p class="section-intro">
+      21 real inheritance bugs — each shown as wrong code, explained in detail, then fixed. These are the patterns that silently pass tests but break in production.
+    </p>
+  </div>
+
+  <!-- Bug 3 -->
+  <div class="example">
+    <div class="sev-badge sev-major">BUG 3</div>
+    <div class="ex-title">Class variable shadowed by instance variable — silent inconsistency</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      Writing <code class="inline">self.count += 1</code> reads the class variable, then creates a new <em>instance</em> variable to store the result. The class variable is never updated. This is one of the most confusing Python attribute lookup behaviours.
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;self.count += 1 creates instance shadow</div>
+        <pre class="language-python"><code class="language-python">class Counter:
+    count = 0   # class variable
+
+    def __init__(self):
+        self.count += 1  # WRONG: reads class, writes instance!
+        #  self.count = self.count + 1
+        #  read: class var (0)
+        #  write: new instance var!
+
+c1 = Counter(); c2 = Counter()
+print(c1.count)        # 1 (instance var)
+print(c2.count)        # 1 (instance var)
+print(Counter.count)   # 0 — class var NEVER updated!</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;Use ClassName.var to update class variable</div>
+        <pre class="language-python"><code class="language-python">class Counter:
+    count = 0
+
+    def __init__(self):
+        Counter.count += 1  # modifies class variable directly
+
+c1 = Counter(); c2 = Counter()
+print(c1.count)        # 2 (inherited from class)
+print(c2.count)        # 2 (inherited from class)
+print(Counter.count)   # 2 — correctly updated!
+
+# Alternative: use cls in a classmethod
+class Counter2:
+    count = 0
+    def __init__(self): type(self).count += 1  # subclass-safe</code></pre>
+      </div>
+    </div>
+    <div class="anno-table">
+      <div class="anno-col bad">
+        <div class="anno-col-label">⚠ What is wrong</div>
+        <ul class="anno-list">
+          <li><code class="inline">self.count += 1</code> expands to <code class="inline">self.count = self.count + 1</code> — the write creates an instance attr</li>
+          <li>Class variable stays at 0 forever — the "global" counter is broken</li>
+          <li>c1 and c2 each have their own <code class="inline">count = 1</code> — the class var is shadowed but never shared</li>
+        </ul>
+      </div>
+      <div class="anno-col good">
+        <div class="anno-col-label">✔ Why the fix works</div>
+        <ul class="anno-list">
+          <li><code class="inline">Counter.count += 1</code> directly modifies the class-level attribute — no instance shadow created</li>
+          <li><code class="inline">type(self).count += 1</code> is subclass-safe — updates the actual class of the instance, not the hardcoded parent</li>
+          <li>All instances see the updated class variable because none of them shadow it with an instance attr</li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>To update a class variable, use <code class="inline">ClassName.var</code> or <code class="inline">type(self).var</code> — never <code class="inline">self.var</code></li>
+        <li>Attribute lookup order: instance <code class="inline">__dict__</code> → class <code class="inline">__dict__</code> → parent classes</li>
+        <li>Writing via <code class="inline">self.var = ...</code> always creates or updates the <em>instance</em> attribute, never the class attribute</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="ex-divider">
+
+  <!-- Bug 12 -->
+  <div class="example">
+    <div class="sev-badge sev-critical">BUG 12</div>
+    <div class="ex-title">Diamond problem without cooperative super() — Base.__init__ called twice</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      Hardcoding parent class names in <code class="inline">__init__</code> in a diamond hierarchy causes the shared base class to be initialised twice. Any resource opened in the base (DB connection, file handle, counter increment) runs twice — silently corrupting state.
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;Hardcoded calls — Base.__init__ twice</div>
+        <pre class="language-python"><code class="language-python">class Base:
+    def __init__(self):
+        print("Base.__init__")  # prints TWICE
+        self.value = 0
+
+class Left(Base):
+    def __init__(self):
+        Base.__init__(self)  # hardcoded
+        self.left = 1
+
+class Right(Base):
+    def __init__(self):
+        Base.__init__(self)  # hardcoded — fires again!
+        self.right = 2
+
+class Both(Left, Right):
+    def __init__(self):
+        Left.__init__(self)
+        Right.__init__(self)  # Base runs again here!
+
+Both()  # Base.__init__ printed TWICE</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;Cooperative super() — Base.__init__ once</div>
+        <pre class="language-python"><code class="language-python">class Base:
+    def __init__(self):
+        print("Base.__init__")  # prints ONCE
+        super().__init__()
+        self.value = 0
+
+class Left(Base):
+    def __init__(self):
+        super().__init__()  # MRO-aware
+        self.left = 1
+
+class Right(Base):
+    def __init__(self):
+        super().__init__()  # MRO-aware
+        self.right = 2
+
+class Both(Left, Right):
+    def __init__(self):
+        super().__init__()  # threads through MRO
+
+Both()  # Base.__init__ printed exactly ONCE
+# MRO: Both → Left → Right → Base</code></pre>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>In any diamond hierarchy, all classes must use cooperative <code class="inline">super()</code> — one hardcoded call breaks the whole chain</li>
+        <li>If the base opens a DB connection, file, or increments a counter — it runs twice with hardcoded calls</li>
+        <li>Test: print a message in Base.__init__ and count how many times it appears in the output</li>
+      </ul>
+    </div>
+    <div class="impact-box">
+      <strong>Real-world impact</strong>
+      A payment service with hardcoded parent calls in a diamond initialised a DB connection pool twice. Under load, this doubled the connection count, exhausting the pool limit and causing intermittent connection timeouts that took 3 hours to diagnose.
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 8 — STATIC CONCEPTS -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <div class="section-number">Section 07</div>
+    <h2 class="section-title">Static Concepts</h2>
+    <p class="section-intro">
+      <code class="inline">@staticmethod</code> has no implicit first argument — it's just a namespaced function. <code class="inline">@classmethod</code> receives <code class="inline">cls</code> — the <em>actual class</em> it is called on, not the class that defined it. This distinction is critical for factory methods and class-level registries.
+    </p>
+  </div>
+
+  <div class="checklist-label">Review checklist</div>
+  <ul class="checklist">
+    <li><strong>@staticmethod</strong> used for pure utility — no self or cls needed</li>
+    <li><strong>@classmethod</strong> used when the method needs the class (factory, registry)</li>
+    <li><strong>cls in @classmethod</strong> is the subclass when called on a subclass</li>
+    <li><strong>Class variables accessed</strong> via <code class="inline">cls.var</code> inside classmethods</li>
+    <li><strong>Static/class methods inherited</strong> without needing to re-declare</li>
+    <li><strong>Abstract static methods</strong> use stacked <code class="inline">@staticmethod @abstractmethod</code></li>
+  </ul>
+
+  <div class="example">
+    <div class="sev-badge sev-critical">CRITICAL</div>
+    <div class="ex-title">@classmethod cls is the subclass — the factory pattern key</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      When a <code class="inline">@classmethod</code> uses <code class="inline">cls()</code> to create an instance, and is called on a subclass, it creates an instance of the subclass — not the class that defined the method. This is the foundation of the factory pattern in Python. A hardcoded <code class="inline">ParentClass()</code> would break this.
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;Hardcoded class name — subclass gets wrong type</div>
+        <pre class="language-python"><code class="language-python">class Colour:
+    def __init__(self, r, g, b):
+        self.r, self.g, self.b = r, g, b
+
+    @classmethod
+    def from_hex(cls, hex_str: str):
+        hex_str = hex_str.lstrip("#")
+        r = int(hex_str[0:2], 16)
+        g = int(hex_str[2:4], 16)
+        b = int(hex_str[4:6], 16)
+        return Colour(r, g, b)  # WRONG: hardcoded Colour!
+
+class NamedColour(Colour):
+    def __init__(self, r, g, b, name=""):
+        super().__init__(r, g, b); self.name = name
+
+c = NamedColour.from_hex("#FF5733")
+print(type(c))   # <class 'Colour'> — WRONG!
+                  # Should be NamedColour</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;Use cls() — returns the actual subclass</div>
+        <pre class="language-python"><code class="language-python">class Colour:
+    def __init__(self, r, g, b):
+        self.r, self.g, self.b = r, g, b
+
+    @classmethod
+    def from_hex(cls, hex_str: str):
+        hex_str = hex_str.lstrip("#")
+        r = int(hex_str[0:2], 16)
+        g = int(hex_str[2:4], 16)
+        b = int(hex_str[4:6], 16)
+        return cls(r, g, b)    # cls = whatever class called this
+
+    @classmethod
+    def from_tuple(cls, t: tuple):
+        return cls(*t)         # works for subclasses too
+
+class NamedColour(Colour):
+    def __init__(self, r, g, b, name=""):
+        super().__init__(r, g, b); self.name = name
+
+c1 = Colour.from_hex("#FF5733")
+print(type(c1))  # <class 'Colour'>
+
+c2 = NamedColour.from_hex("#1E90FF")
+print(type(c2))  # <class 'NamedColour'> ← correct!</code></pre>
+      </div>
+    </div>
+    <div class="anno-table">
+      <div class="anno-col bad">
+        <div class="anno-col-label">⚠ What is wrong</div>
+        <ul class="anno-list">
+          <li>Hardcoded <code class="inline">Colour(r, g, b)</code> always creates a Colour — even when called on NamedColour</li>
+          <li>Subclass-specific attributes (like <code class="inline">name</code>) are silently lost</li>
+          <li>Any further subclassing produces the wrong type from all factory methods</li>
+        </ul>
+      </div>
+      <div class="anno-col good">
+        <div class="anno-col-label">✔ Why the fix works</div>
+        <ul class="anno-list">
+          <li><code class="inline">cls</code> is the class the method is called on — <code class="inline">NamedColour</code> when called on NamedColour</li>
+          <li><code class="inline">cls(r, g, b)</code> calls <code class="inline">NamedColour.__init__</code> — the right constructor for the right class</li>
+          <li>This pattern is used in Python's stdlib: <code class="inline">datetime.fromisoformat()</code>, <code class="inline">int.from_bytes()</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>In <code class="inline">@classmethod</code> factories, always use <code class="inline">cls()</code> not <code class="inline">ClassName()</code> — it's the whole point of receiving cls</li>
+        <li><code class="inline">@staticmethod</code> has no cls or self — it cannot be a factory for subclasses</li>
+        <li>Use <code class="inline">@classmethod</code> for: alternate constructors, registries, subclass-aware configuration</li>
+        <li>Use <code class="inline">@staticmethod</code> for: pure utility functions logically grouped with the class</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 9 — EXCEPTION HANDLING -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s10">
+  <div class="section-header">
+    <div class="section-number">Section 10</div>
+    <h2 class="section-title">Exception Handling</h2>
+    <p class="section-intro">
+      Exception handling in Python has nuances that catch even experienced developers: bare <code class="inline">except:</code> swallows keyboard interrupts, re-raising incorrectly loses tracebacks, and <code class="inline">finally</code> with a <code class="inline">return</code> silently overrides the <code class="inline">try</code> result.
+    </p>
+  </div>
+
+  <div class="checklist-label">Review checklist</div>
+  <ul class="checklist">
+    <li><strong>Specific exceptions</strong> caught — never bare <code class="inline">except:</code></li>
+    <li><strong>Exception chaining</strong> preserved with <code class="inline">raise ... from e</code></li>
+    <li><strong>No return in finally</strong> — overrides try/except result silently</li>
+    <li><strong>Custom exception hierarchy</strong> rooted at a domain base class</li>
+    <li><strong>KeyboardInterrupt/SystemExit</strong> never caught by <code class="inline">except Exception</code></li>
+    <li><strong>Context managers</strong> preferred over try/finally for resource cleanup</li>
+  </ul>
+
+  <div class="example">
+    <div class="sev-badge sev-critical">CRITICAL</div>
+    <div class="ex-title">Bare except: catches KeyboardInterrupt — program can never quit</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      A bare <code class="inline">except:</code> (with no exception class) catches everything including <code class="inline">KeyboardInterrupt</code> (Ctrl+C) and <code class="inline">SystemExit</code>. This can make a program impossible to stop from the terminal, and hides completely unrelated bugs like <code class="inline">NameError</code> and <code class="inline">TypeError</code>.
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;Bare except — swallows everything</div>
+        <pre class="language-python"><code class="language-python">def process(data):
+    try:
+        result = transform(data)
+        return result
+    except:           # catches EVERYTHING
+        pass          # silently swallows bugs!
+
+# KeyboardInterrupt (Ctrl+C) — swallowed!
+# SystemExit (sys.exit()) — swallowed!
+# NameError from a typo — swallowed!
+# Your actual bug — hidden!
+
+while True:
+    process(get_data())  # can never be stopped</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;Catch only what you expect</div>
+        <pre class="language-python"><code class="language-python">def process(data):
+    try:
+        result = transform(data)
+        return result
+    except ValueError as e:       # only what transform raises
+        logger.warning("Bad data: %s", e)
+        return None
+    except (IOError, OSError) as e:
+        logger.error("IO failure: %s", e)
+        raise                      # re-raise — caller handles
+
+# KeyboardInterrupt propagates naturally — Ctrl+C works
+# SystemExit propagates — sys.exit() works
+# NameError propagates — bug is visible in logs
+# ValueError handled — expected condition managed</code></pre>
+      </div>
+    </div>
+    <div class="anno-table">
+      <div class="anno-col bad">
+        <div class="anno-col-label">⚠ What is wrong</div>
+        <ul class="anno-list">
+          <li>Bare <code class="inline">except:</code> catches <code class="inline">BaseException</code> — includes KeyboardInterrupt and SystemExit</li>
+          <li>Program cannot be interrupted with Ctrl+C — appears frozen to the user</li>
+          <li>Real bugs (NameError, AttributeError) are silently swallowed — never appear in logs</li>
+          <li>Catching everything is always wrong — you can't handle what you can't predict</li>
+        </ul>
+      </div>
+      <div class="anno-col good">
+        <div class="anno-col-label">✔ Why the fix works</div>
+        <ul class="anno-list">
+          <li><code class="inline">except ValueError</code> catches only what <code class="inline">transform()</code> is documented to raise</li>
+          <li>KeyboardInterrupt and SystemExit inherit from <code class="inline">BaseException</code>, not <code class="inline">Exception</code> — they bypass all <code class="inline">except Exception</code> clauses</li>
+          <li>Bare <code class="inline">raise</code> re-raises the original exception with its full traceback intact</li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>Never use bare <code class="inline">except:</code> — always name the exception: <code class="inline">except ValueError</code></li>
+        <li><code class="inline">except Exception</code> is the widest acceptable catch — it still lets KeyboardInterrupt and SystemExit through</li>
+        <li>Bare <code class="inline">raise</code> inside an except block re-raises with the original traceback — use it for logging-then-reraise</li>
+        <li>Custom exception hierarchies: <code class="inline">AppError → NetworkError → TimeoutError</code> — catch at the right level</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="ex-divider">
+
+  <div class="example">
+    <div class="sev-badge sev-major">MAJOR</div>
+    <div class="ex-title">return in finally silently overrides the try/except result</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      A <code class="inline">return</code> statement inside a <code class="inline">finally</code> block overrides whatever value was being returned from the <code class="inline">try</code> or <code class="inline">except</code> block. This is one of Python's most surprising behaviours and can hide exceptions entirely.
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;return in finally — overrides try result</div>
+        <pre class="language-python"><code class="language-python">def tricky():
+    try:
+        return "from try"
+    finally:
+        return "from finally"  # overrides try return!
+
+print(tricky())  # "from finally" — surprising!
+
+def even_worse():
+    try:
+        raise ValueError("important error")
+    finally:
+        return "ok"  # exception SWALLOWED silently!
+
+print(even_worse())  # "ok" — ValueError disappeared!</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;No return in finally — use for cleanup only</div>
+        <pre class="language-python"><code class="language-python">def safe():
+    result = None
+    try:
+        result = compute()       # set result in try
+    except ValueError as e:
+        result = default_value   # handle in except
+        logger.error("Error: %s", e)
+    finally:
+        cleanup()                # cleanup ONLY — no return!
+    return result                # return AFTER try/finally
+
+def safe_resource():
+    resource = acquire()
+    try:
+        return process(resource)
+    finally:
+        resource.release()      # always releases — no return</code></pre>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>Never put <code class="inline">return</code> in a <code class="inline">finally</code> block — it overrides any exception or return value from try/except</li>
+        <li><code class="inline">finally</code> is for cleanup only: closing files, releasing locks, disconnecting from resources</li>
+        <li>Place the <code class="inline">return</code> statement <em>after</em> the entire try/except/finally block, not inside it</li>
+        <li>Prefer context managers (<code class="inline">with</code>) over try/finally for resource management — they're cleaner and safer</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 10 — ADVANCED PATTERNS -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s11">
+  <div class="section-header">
+    <div class="section-number">Section 11</div>
+    <h2 class="section-title">Advanced Patterns</h2>
+    <p class="section-intro">
+      Descriptors, metaclasses, <code class="inline">__slots__</code>, <code class="inline">__init_subclass__</code>, and <code class="inline">__new__</code> — the deeper Python OOP machinery used for frameworks, ORMs, and validation libraries.
+    </p>
+  </div>
+
+  <div class="checklist-label">Review checklist</div>
+  <ul class="checklist">
+    <li><strong>__slots__</strong> declared in every class in the chain for full memory savings</li>
+    <li><strong>Descriptors</strong> use __set_name__ to receive the attribute name automatically</li>
+    <li><strong>Metaclasses</strong> used only when class decorators or __init_subclass__ won't suffice</li>
+    <li><strong>__new__</strong> used for immutable types, caching, and singleton patterns</li>
+    <li><strong>__init_subclass__</strong> used for plugin registration and subclass validation</li>
+    <li><strong>Singleton metaclass</strong> — _instances dict keyed on cls, not hardcoded class</li>
+  </ul>
+
+  <div class="example">
+    <div class="sev-badge sev-major">MAJOR</div>
+    <div class="ex-title">__slots__ in parent but not child — memory savings silently lost</div>
+    <div class="why-box">
+      <div class="why-box-label">Why this matters</div>
+      If a parent class defines <code class="inline">__slots__</code> but a child class does not, Python adds <code class="inline">__dict__</code> back to the child. This silently re-enables arbitrary attribute assignment and eliminates the memory savings that <code class="inline">__slots__</code> was supposed to provide.
+    </div>
+    <div class="code-table">
+      <div class="code-col bad">
+        <div class="code-col-header">✗ &nbsp;__slots__ missing in child — __dict__ reappears</div>
+        <pre class="language-python"><code class="language-python">class Base:
+    __slots__ = ("x", "y")   # memory-efficient
+    def __init__(self, x, y): self.x, self.y = x, y
+
+class Child(Base):
+    # No __slots__ defined!
+    # Python adds __dict__ to Child automatically
+    pass
+
+c = Child(1, 2)
+c.x = 10             # still works (from slot)
+c.unexpected = "oops" # works! __dict__ is back
+print(hasattr(c, "__dict__"))  # True — slots failed!</code></pre>
+      </div>
+      <div class="code-col good">
+        <div class="code-col-header">✓ &nbsp;__slots__ in every class in the chain</div>
+        <pre class="language-python"><code class="language-python">class Base:
+    __slots__ = ("x", "y")
+    def __init__(self, x, y): self.x, self.y = x, y
+
+class Child(Base):
+    __slots__ = ("z",)       # adds z; inherits x, y from Base
+    def __init__(self, x, y, z):
+        super().__init__(x, y)
+        self.z = z
+    def volume(self): return self.x * self.y * self.z
+
+c = Child(3, 4, 5)
+print(c.volume())    # 60
+try:
+    c.unexpected = "oops"
+except AttributeError as e:
+    print(f"Blocked correctly: {e}")
+print(hasattr(c, "__dict__"))  # False — slots intact</code></pre>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>For <code class="inline">__slots__</code> to work in a hierarchy, <em>every class</em> must define <code class="inline">__slots__</code></li>
+        <li>Child's <code class="inline">__slots__</code> only needs to list new attributes — parent slots are inherited automatically</li>
+        <li><code class="inline">__slots__</code> saves ~50 bytes per instance — critical when storing millions of objects</li>
+        <li>Use <code class="inline">@dataclass(slots=True)</code> in Python 3.10+ for slot efficiency with dataclass ergonomics</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION 11 — FILE OPERATIONS -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="s12">
+  <div class="section-header">
+    <div class="section-number">Section 12</div>
+    <h2 class="section-title">File Operations with Inheritance</h2>
+    <p class="section-intro">
+      File operation classes demonstrate how inheritance, mixins, context managers, and exception handling combine in real systems. A <code class="inline">FileManager</code> base provides all I/O primitives; specialised subclasses inherit them and add domain logic.
+    </p>
+  </div>
+
+  <div class="checklist-label">Review checklist</div>
+  <ul class="checklist">
+    <li><strong>Context managers</strong> used for all file I/O — never manual open/close</li>
+    <li><strong>Encoding</strong> always specified explicitly — never rely on platform default</li>
+    <li><strong>Binary files</strong> opened with <code class="inline">"rb"/"wb"</code> modes</li>
+    <li><strong>CSV</strong> opened with <code class="inline">newline=""</code> to prevent double-newline on Windows</li>
+    <li><strong>Pickle</strong> never used on untrusted external data (RCE risk)</li>
+    <li><strong>Temp directories</strong> cleaned up with <code class="inline">tempfile.TemporaryDirectory</code> context manager</li>
+  </ul>
+
+  <div class="example">
+    <div class="sev-badge sev-major">MAJOR</div>
+    <div class="ex-title">FileManager hierarchy — base I/O + specialised subclasses</div>
+    <div class="code-single">
+      <div class="code-single-header">
+        <span>python — file_manager_hierarchy.py</span>
+        <button class="copy-btn" onclick="copyCode(this, '')">Copy</button>
+      </div>
+      <pre class="language-python"><code class="language-python">import os, json, csv, tempfile
+from abc import ABC, abstractmethod
+
+class FileManager:
+    # Base: all file I/O primitives inherited by subclasses.
+
+    @staticmethod
+    def write_text(path: str, content: str, mode: str = "w",
+                   encoding: str = "utf-8"):
+        with open(path, mode, encoding=encoding) as fh:
+            fh.write(content)
+
+    @staticmethod
+    def read_text(path: str, encoding: str = "utf-8") -> str:
+        with open(path, "r", encoding=encoding) as fh:
+            return fh.read()
+
+    @staticmethod
+    def write_json(path: str, obj, indent: int = 2):
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(obj, fh, indent=indent)
+
+    @staticmethod
+    def read_json(path: str):
+        with open(path, "r", encoding="utf-8") as fh:
+            return json.load(fh)
+
+    @staticmethod
+    def write_csv(path: str, rows: list, header: list = None):
+        with open(path, "w", newline="", encoding="utf-8") as fh:
+            writer = csv.writer(fh)
+            if header: writer.writerow(header)
+            writer.writerows(rows)
+
+    @staticmethod
+    def ensure_dir(path: str):
+        os.makedirs(path, exist_ok=True)
+
+
+class EmployeeFileManager(FileManager):
+    # Inherits all FileManager I/O - adds employee domain logic.
+
+    def save_employee(self, emp_dict: dict, directory: str) -> str:
+        self.ensure_dir(directory)
+        path = os.path.join(directory, f"emp_{emp_dict['id']}.json")
+        self.write_json(path, emp_dict)
+        return path
+
+    def export_csv(self, employees: list, path: str):
+        header = ["id", "name", "salary"]
+        rows = [[e["id"], e["name"], f"{e['salary']:.2f}"]
+                for e in employees]
+        self.write_csv(path, rows, header=header)
+
+
+class BaseFileProcessor(ABC, FileManager):
+    # Abstract base: subclasses process specific file types.
+    def __init__(self, path: str):
+        self.path = path
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"File not found: {path}")
+
+    @abstractmethod
+    def process(self) -> dict: ...
+
+    def safe_process(self) -> dict:
+        try:
+            return self.process()
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Corrupt file {self.path}: {e}") from e
+
+
+class JSONProcessor(BaseFileProcessor):
+    def process(self) -> dict:
+        return self.read_json(self.path)
+
+class TextProcessor(BaseFileProcessor):
+    def process(self) -> dict:
+        lines = self.read_text(self.path).splitlines()
+        return {"lines": len(lines),
+                "words": sum(len(l.split()) for l in lines)}
+
+
+# Demo
+with tempfile.TemporaryDirectory() as d:
+    # Save some JSON
+    efm = EmployeeFileManager()
+    p = efm.save_employee({"id": 1, "name": "Alice", "salary": 75000}, d)
+
+    # Process it back
+    jp = JSONProcessor(p)
+    print(jp.safe_process())   # {'id': 1, 'name': 'Alice', ...}
+
+    # Text file
+    tp_path = os.path.join(d, "notes.txt")
+    FileManager.write_text(tp_path, "Python is powerful.\nInheritance is elegant.\n")
+    tp = TextProcessor(tp_path)
+    print(tp.safe_process())   # {'lines': 2, 'words': 6}</code></pre>
+    </div>
+    <div class="takeaways">
+      <div class="takeaways-label">Key Takeaways</div>
+      <ul class="takeaways-list">
+        <li>Static methods on a base class are the cleanest way to share pure utilities — no instance state needed</li>
+        <li>Combining ABC with FileManager via multiple inheritance gives each processor both the contract and the tools</li>
+        <li>Always specify <code class="inline">encoding="utf-8"</code> — platform default encoding varies across OS and Python version</li>
+        <li>Use <code class="inline">tempfile.TemporaryDirectory()</code> as context manager — cleanup is guaranteed even on exception</li>
+      </ul>
+    </div>
+    <div class="impact-box">
+      <strong>Real-world impact</strong>
+      A data pipeline that opened CSV files without <code class="inline">newline=""</code> produced doubled line breaks on Windows CI runners but worked fine on macOS developer machines. The fix was one parameter — but diagnosis took 4 hours.
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script>
+// ── SIDEBAR NAV ──────────────────────────────────────────────────────────
+const NAV_ITEMS = [
+  { group: "Core Inheritance",  items: [
+    { id: "s1",  num: "01", label: "Single Inheritance" },
+    { id: "s2",  num: "02", label: "Multilevel Inheritance" },
+    { id: "s3",  num: "03", label: "Multiple Inheritance & MRO" },
+    { id: "s4",  num: "04", label: "Abstract Base Classes" },
+    { id: "s5",  num: "05", label: "Mixin Classes" },
+  ]},
+  { group: "Special Patterns",  items: [
+    { id: "s7",  num: "07", label: "Static Concepts" },
+    { id: "s11", num: "11", label: "Advanced Patterns" },
+    { id: "s12", num: "12", label: "File Operations" },
+  ]},
+  { group: "Examples & Analysis", items: [
+    { id: "s8",  num: "08", label: "Tricky Examples (22)" },
+    { id: "s9",  num: "09", label: "Bug Analyses (21)" },
+    { id: "s10", num: "10", label: "Exception Handling (12)" },
+  ]},
+];
+
+const nav = document.getElementById("sbNav");
+NAV_ITEMS.forEach(g => {
+  const lbl = document.createElement("div");
+  lbl.className = "sb-section-label";
+  lbl.textContent = g.group;
+  nav.appendChild(lbl);
+  g.items.forEach(item => {
+    const el = document.createElement("div");
+    el.className = "sb-item";
+    el.dataset.id = item.id;
+    el.innerHTML = `<span class="sb-num">${item.num}</span><span>${item.label}</span>`;
+    el.onclick = () => scrollToSection(item.id);
+    nav.appendChild(el);
+  });
+});
+
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  document.querySelectorAll(".sb-item").forEach(i =>
+    i.classList.toggle("active", i.dataset.id === id));
+}
+
+// ── PROGRESS BAR ─────────────────────────────────────────────────────────
+const fill = document.getElementById("progress-fill");
+window.addEventListener("scroll", () => {
+  const max = document.body.scrollHeight - window.innerHeight;
+  fill.style.width = (max > 0 ? (scrollY / max) * 100 : 0) + "%";
+});
+
+// ── ACTIVE NAV ON SCROLL ─────────────────────────────────────────────────
+const sections = document.querySelectorAll(".section[id]");
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll(".sb-item").forEach(i =>
+        i.classList.toggle("active", i.dataset.id === e.target.id));
+    }
+  });
+}, { threshold: 0.25 });
+sections.forEach(s => io.observe(s));
+
+// ── COPY BUTTONS ─────────────────────────────────────────────────────────
+function copyCode(btn, code) {
+  const pre = btn.closest(".code-single, .code-col")
+                 ?.querySelector("pre code");
+  const text = code || (pre ? pre.textContent : "");
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = "Copied!";
+    btn.classList.add("ok");
+    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("ok"); }, 2000);
+  });
+}
+document.querySelectorAll(".code-col.bad, .code-col.good").forEach(col => {
+  const hdr = col.querySelector(".code-col-header");
+  const btn = document.createElement("button");
+  btn.className = "copy-btn";
+  btn.textContent = "Copy";
+  btn.style.marginLeft = "auto";
+  btn.onclick = (e) => { e.stopPropagation(); copyCode(btn, ""); };
+  hdr.appendChild(btn);
+});
+
+// ── SIDEBAR SEARCH ────────────────────────────────────────────────────────
+document.getElementById("sbSearch").addEventListener("input", e => {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll(".sb-item").forEach(item => {
+    const match = item.textContent.toLowerCase().includes(q);
+    item.style.display = match ? "" : "none";
+  });
+  document.querySelectorAll(".sb-section-label").forEach(lbl => {
+    const next = lbl.nextElementSibling;
+    let hasVisible = false;
+    let el = next;
+    while (el && !el.classList.contains("sb-section-label")) {
+      if (el.style.display !== "none") hasVisible = true;
+      el = el.nextElementSibling;
+    }
+    lbl.style.display = hasVisible ? "" : "none";
+  });
+});
+
+// ── CAT CELL CLICKS ───────────────────────────────────────────────────────
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.querySelectorAll(".sb-item").forEach(i =>
+      i.classList.toggle("active", i.dataset.id === id));
+  }
+}
+</script>
+</body>
+</html>
