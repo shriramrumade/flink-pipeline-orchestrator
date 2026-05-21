@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Interview Practice — Find & Fix 200-Line Code Challenges</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;0,600;0,800;1,300;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:15px}
+:root{
+  --ink:#1a1c22;--ink2:#2e3140;--ink3:#444860;--muted:#6b6f88;--faint:#9094aa;
+  --rule:#e2e4ed;--paper:#f8f8fb;--white:#fff;
+  --gold:#c8860a;--gold-lt:#fdf3dc;--gold-mid:#f7e0a4;
+  --red:#c0392b;--red-lt:#fdf0ef;--red-mid:#f9cbc7;
+  --blue:#1d5fa8;--blue-lt:#eef4fc;--blue-mid:#bad4f5;
+  --green:#1a7a45;--green-lt:#edfaf3;--green-mid:#a8e6c1;
+  --purple:#6b28a8;--purple-lt:#f5effe;--purple-mid:#d6b5f5;
+  --orange:#b85c00;--orange-lt:#fff3e0;--orange-mid:#ffcc80;
+  --ff-display:'Fraunces',Georgia,serif;
+  --ff-body:'DM Sans',sans-serif;
+  --ff-mono:'IBM Plex Mono','Fira Code',monospace;
+}
+body{background:var(--paper);color:var(--ink);font-family:var(--ff-body);line-height:1.65}
+
+/* LAYOUT */
+.page-wrap{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{background:var(--ink);color:var(--faint);position:sticky;top:0;height:100vh;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:var(--ink2) transparent}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--ink2)}
+.sb-brand{padding:26px 20px 18px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.sb-badge{display:inline-block;font-family:var(--ff-mono);font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;background:var(--red);color:var(--white);padding:3px 8px;border-radius:3px;margin-bottom:10px}
+.sb-title{font-family:var(--ff-display);font-weight:800;font-size:16px;color:var(--white);line-height:1.25;margin-bottom:5px}
+.sb-meta{font-family:var(--ff-mono);font-size:10px;color:var(--muted)}
+.sb-search{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.sb-search input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:var(--white);font-family:var(--ff-mono);font-size:11px;padding:7px 10px 7px 28px;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6f88' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:9px center;transition:border-color .2s}
+.sb-search input:focus{border-color:var(--red)}
+.sb-search input::placeholder{color:var(--ink3)}
+.sb-nav{flex:1;padding:8px 0 24px}
+.sb-group-label{font-family:var(--ff-mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);padding:14px 18px 4px}
+.sb-item{display:flex;align-items:flex-start;gap:8px;padding:7px 18px;cursor:pointer;font-size:12px;color:var(--muted);border-left:2px solid transparent;transition:all .15s;line-height:1.4}
+.sb-item:hover{color:var(--white);background:rgba(255,255,255,.04)}
+.sb-item.active{color:var(--white);border-left-color:var(--red);background:rgba(192,57,43,.12)}
+.sb-num{font-family:var(--ff-mono);font-size:10px;color:var(--ink3);flex-shrink:0;min-width:22px;margin-top:1px}
+.sb-item.active .sb-num{color:var(--red)}
+.sb-bugs{font-family:var(--ff-mono);font-size:9px;color:var(--red);margin-left:auto;flex-shrink:0;padding:1px 5px;background:rgba(192,57,43,.15);border-radius:3px}
+
+/* MAIN */
+.main{min-width:0}
+
+/* COVER */
+.cover{background:var(--ink);padding:56px 56px 48px;position:relative;overflow:hidden}
+.cover::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(255,255,255,.012) 40px,rgba(255,255,255,.012) 41px);pointer-events:none}
+.cover-eyebrow{font-family:var(--ff-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+.cover-title{font-family:var(--ff-display);font-weight:800;font-size:clamp(28px,4vw,50px);color:var(--white);line-height:1.05;margin-bottom:8px}
+.cover-title em{font-style:italic;font-weight:300;color:var(--gold)}
+.cover-sub{font-family:var(--ff-display);font-size:clamp(14px,1.8vw,19px);font-weight:300;font-style:italic;color:var(--faint);margin-bottom:26px}
+.cover-stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:30px}
+.cstat{font-family:var(--ff-mono);font-size:11px;padding:6px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;color:var(--faint)}
+.cstat strong{color:var(--white);font-weight:600}
+
+/* Challenge grid (cover) */
+.challenge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;border:1px solid rgba(255,255,255,.08);border-radius:8px;overflow:hidden}
+.cg-cell{background:rgba(255,255,255,.04);padding:14px 15px;cursor:pointer;transition:background .15s}
+.cg-cell:hover{background:rgba(255,255,255,.09)}
+.cg-num{font-family:var(--ff-mono);font-size:9px;font-weight:600;color:var(--red);letter-spacing:.1em;margin-bottom:4px}
+.cg-title{font-size:12px;font-weight:600;color:var(--white);line-height:1.3;margin-bottom:3px}
+.cg-meta{font-family:var(--ff-mono);font-size:9.5px;color:var(--muted)}
+
+/* USAGE BOX */
+.usage-box{background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.22);border-radius:6px;padding:18px 22px;margin:26px 56px 0}
+.usage-title{font-family:var(--ff-mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:10px}
+.usage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px}
+.usage-item{font-size:12.5px;color:var(--ink2);padding-left:14px;position:relative;line-height:1.5}
+.usage-item::before{content:'→';position:absolute;left:0;color:var(--red);font-family:var(--ff-mono);font-size:11px}
+
+/* SECTION */
+.section{padding:48px 56px;border-bottom:1px solid var(--rule)}
+.section:last-child{border-bottom:none}
+.section-header{margin-bottom:24px}
+.section-num{font-family:var(--ff-mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+.section-title{font-family:var(--ff-display);font-size:clamp(20px,2.5vw,28px);font-weight:800;color:var(--ink);line-height:1.15;margin-bottom:12px}
+.section-intro{font-size:14px;color:var(--ink3);max-width:800px;line-height:1.75;border-left:3px solid var(--rule);padding-left:18px}
+
+/* DIFFICULTY & TOPIC BADGES */
+.meta-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--ff-mono);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:4px;border:1px solid}
+.badge-hard{background:var(--red-lt);color:var(--red);border-color:var(--red-mid)}
+.badge-medium{background:var(--orange-lt);color:var(--orange);border-color:var(--orange-mid)}
+.badge-easy{background:var(--green-lt);color:var(--green);border-color:var(--green-mid)}
+.badge-topic{background:var(--blue-lt);color:var(--blue);border-color:var(--blue-mid)}
+.badge-count{background:var(--red-lt);color:var(--red);border-color:var(--red-mid)}
+.badge-lines{background:rgba(0,0,0,.05);color:var(--muted);border-color:var(--rule)}
+
+/* TASK BOX */
+.task-box{background:var(--gold-lt);border:1px solid var(--gold-mid);border-left:4px solid var(--gold);border-radius:0 6px 6px 0;padding:14px 18px;margin-bottom:18px}
+.task-label{font-family:var(--ff-mono);font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.task-text{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.task-list{list-style:none;margin-top:8px}
+.task-list li{font-size:13px;color:var(--ink2);padding:3px 0 3px 18px;position:relative;line-height:1.5}
+.task-list li::before{content:'□';position:absolute;left:0;color:var(--gold);font-family:var(--ff-mono)}
+
+/* BUGGY CODE BLOCK */
+.buggy-block{margin-bottom:0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--ink2);border-radius:8px 8px 0 0}
+.code-header-left{display:flex;align-items:center;gap:10px}
+.code-filename{font-family:var(--ff-mono);font-size:11px;color:var(--faint)}
+.code-tag{font-family:var(--ff-mono);font-size:9px;font-weight:600;padding:2px 8px;border-radius:3px;letter-spacing:.08em;text-transform:uppercase}
+.code-tag-buggy{background:rgba(192,57,43,.3);color:#ff8a80}
+.code-tag-fixed{background:rgba(26,122,69,.3);color:#69f0ae}
+.btn{font-family:var(--ff-mono);font-size:10px;padding:4px 12px;border-radius:5px;cursor:pointer;transition:all .15s;border:1px solid}
+.btn-copy{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);color:var(--faint)}
+.btn-copy:hover{color:var(--white);border-color:rgba(255,255,255,.35)}
+.btn-copy.ok{color:#69f0ae;border-color:#69f0ae}
+.btn-reveal{background:rgba(192,57,43,.2);border-color:rgba(192,57,43,.4);color:#ff8a80}
+.btn-reveal:hover{background:rgba(192,57,43,.35)}
+.btn-reveal.shown{background:rgba(26,122,69,.2);border-color:rgba(26,122,69,.4);color:#69f0ae}
+
+pre[class*="language-"]{margin:0!important;border-radius:0!important;font-family:var(--ff-mono)!important;font-size:11.5px!important;line-height:1.62!important;background:#1a1c22!important;padding:18px 20px!important;max-height:580px;overflow-y:auto}
+pre[class*="language-"]::-webkit-scrollbar{width:6px;height:6px}
+pre[class*="language-"]::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+.code-block{border:1px solid rgba(255,255,255,.07);border-radius:8px;overflow:hidden;margin-bottom:18px}
+.code-block-footer{background:var(--ink2);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06)}
+.line-count{font-family:var(--ff-mono);font-size:10px;color:var(--ink3)}
+
+/* HINTS */
+.hints-section{background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:8px;padding:18px 20px;margin-bottom:18px}
+.hints-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0;cursor:pointer}
+.hints-title{font-family:var(--ff-mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+.hints-toggle{font-family:var(--ff-mono);font-size:10px;color:var(--blue);background:none;border:1px solid var(--blue-mid);border-radius:4px;padding:3px 10px;cursor:pointer;transition:all .15s}
+.hints-toggle:hover{background:var(--blue-mid)}
+.hints-body{display:none;margin-top:14px}
+.hints-body.open{display:block}
+.hints-list{list-style:none}
+.hints-list li{font-size:13px;color:var(--ink2);padding:4px 0 4px 18px;position:relative;line-height:1.6}
+.hints-list li::before{content:'💡';position:absolute;left:0;font-size:11px;top:5px}
+
+/* ANSWER SECTION */
+.answer-section{display:none}
+.answer-section.open{display:block}
+.answer-divider{display:flex;align-items:center;gap:14px;margin:24px 0 18px}
+.answer-divider-line{flex:1;height:1px;background:var(--rule)}
+.answer-divider-label{font-family:var(--ff-mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--green);background:var(--green-lt);border:1px solid var(--green-mid);padding:4px 12px;border-radius:4px;white-space:nowrap}
+
+/* BUGS TABLE */
+.bugs-table{border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin-bottom:18px}
+.bugs-table-header{display:grid;grid-template-columns:40px 80px 80px 1fr;background:var(--ink);padding:10px 16px;gap:16px}
+.bugs-table-header span{font-family:var(--ff-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.bug-row{display:grid;grid-template-columns:40px 80px 80px 1fr;padding:11px 16px;gap:16px;border-top:1px solid var(--rule);align-items:start;transition:background .1s}
+.bug-row:hover{background:rgba(0,0,0,.02)}
+.bug-row:first-of-type{border-top:none}
+.bug-num{font-family:var(--ff-mono);font-size:11px;font-weight:600;color:var(--muted)}
+.bug-sev{font-family:var(--ff-mono);font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:3px;text-align:center;letter-spacing:.06em;text-transform:uppercase}
+.bug-sev-crit{background:var(--red-lt);color:var(--red);border:1px solid var(--red-mid)}
+.bug-sev-major{background:var(--gold-lt);color:var(--gold);border:1px solid var(--gold-mid)}
+.bug-sev-minor{background:var(--blue-lt);color:var(--blue);border:1px solid var(--blue-mid)}
+.bug-line{font-family:var(--ff-mono);font-size:11px;color:var(--blue)}
+.bug-desc{}
+.bug-desc strong{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.bug-desc p{font-size:12.5px;color:var(--ink3);line-height:1.6}
+.bug-desc code{font-family:var(--ff-mono);font-size:11px;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;color:var(--blue)}
+
+/* FIXED CODE + DIFF ANNOTATIONS */
+.diff-legend{display:flex;gap:16px;margin-bottom:10px}
+.diff-key{display:flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:10px;color:var(--muted)}
+.diff-key-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.diff-del{background:#4a1c1c}
+.diff-add{background:#1a3a2a}
+
+/* TAKEAWAYS */
+.takeaways{background:var(--ink);border-radius:8px;padding:18px 20px;margin-top:18px}
+.takeaways-label{font-family:var(--ff-mono);font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.takeaways-list{list-style:none}
+.takeaways-list li{font-size:12.5px;color:var(--faint);padding:3px 0 3px 16px;position:relative;line-height:1.6}
+.takeaways-list li::before{content:'→';position:absolute;left:0;color:var(--gold);font-family:var(--ff-mono)}
+
+/* SCORE TRACKER */
+.score-bar{background:var(--ink);padding:16px 22px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.score-label{font-family:var(--ff-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.score-track{display:flex;gap:4px}
+.score-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.1);transition:background .3s}
+.score-dot.found{background:var(--gold)}
+
+/* PROGRESS BAR */
+#progress-bar{position:fixed;top:0;left:0;right:0;height:2px;z-index:1000}
+#progress-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--gold));width:0;transition:width .08s}
+
+/* INLINE CODE */
+code.ic{font-family:var(--ff-mono);font-size:11.5px;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;color:var(--blue)}
+
+/* LINE HIGHLIGHT markers in pre */
+.token.comment.bug-marker{background:rgba(192,57,43,.25)!important;display:inline-block;width:100%;border-left:3px solid var(--red);margin-left:-3px;padding-left:3px}
+
+@media(max-width:900px){.page-wrap{grid-template-columns:1fr}.sidebar{display:none}.cover{padding:32px 20px}.section{padding:32px 18px}.challenge-grid{grid-template-columns:repeat(2,1fr)}.usage-grid{grid-template-columns:1fr 1fr}.bugs-table-header,.bug-row{grid-template-columns:30px 70px 1fr}}
+</style>
+</head>
+<body>
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<div class="page-wrap">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-badge">🔍 Interview Prep</div>
+    <div class="sb-title">Find &amp; Fix<br>Code Challenges</div>
+    <div class="sb-meta">8 challenges · 200+ line snippets</div>
+  </div>
+  <div class="sb-search"><input id="sbSearch" type="text" placeholder="Search challenges…"></div>
+  <div class="score-bar">
+    <div class="score-label">Bugs found (per challenge)</div>
+    <div id="scoreTrack" class="score-track"></div>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main" id="mainContent">
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eyebrow">Python Interview Practice</div>
+  <div class="cover-title">Find the Bugs,<br><em>Fix the Code</em></div>
+  <div class="cover-sub">200+ line real-world code challenges</div>
+  <div class="cover-stats">
+    <div class="cstat"><strong>8</strong> challenges</div>
+    <div class="cstat"><strong>200–250</strong> lines each</div>
+    <div class="cstat"><strong>50+</strong> total bugs</div>
+    <div class="cstat"><strong>Inheritance · OOP · Files · Exceptions · Static</strong></div>
+  </div>
+  <div class="challenge-grid">
+    <div class="cg-cell" onclick="scrollTo('c1')"><div class="cg-num">01</div><div class="cg-title">E-Commerce Order System</div><div class="cg-meta">8 bugs · Hard · 210 lines</div></div>
+    <div class="cg-cell" onclick="scrollTo('c2')"><div class="cg-num">02</div><div class="cg-title">Banking &amp; Accounts</div><div class="cg-meta">7 bugs · Hard · 220 lines</div></div>
+    <div class="cg-cell" onclick="scrollTo('c3')"><div class="cg-num">03</div><div class="cg-title">Plugin Framework</div><div class="cg-meta">8 bugs · Hard · 215 lines</div></div>
+    <div class="cg-cell" onclick="scrollTo('c4')"><div class="cg-num">04</div><div class="cg-title">Data Pipeline &amp; Files</div><div class="cg-meta">7 bugs · Medium · 225 lines</div></div>
+    <div class="cg-cell" onclick="scrollTo('c5')"><div class="cg-num">05</div><div class="cg-title">Game Entity System</div><div class="cg-meta">8 bugs · Hard · 230 lines</div></div>
+    <div class="cg-cell" onclick="scrollTo('c6')"><div class="cg-num">06</div><div class="cg-title">REST API Service Layer</div><div class="cg-meta">7 bugs · Hard · 220 lines</div></div>
+    <div class="cg-cell" onclick="scrollTo('c7')"><div class="cg-num">07</div><div class="cg-title">Notification System</div><div class="cg-meta">6 bugs · Medium · 200 lines</div></div>
+    <div class="cg-cell" onclick="scrollTo('c8')"><div class="cg-num">08</div><div class="cg-title">Config &amp; Validation Engine</div><div class="cg-meta">7 bugs · Hard · 215 lines</div></div>
+  </div>
+</div>
+
+<div class="usage-box">
+  <div class="usage-title">How to use these challenges</div>
+  <div class="usage-grid">
+    <div class="usage-item">Read the Task box — know what the code is supposed to do</div>
+    <div class="usage-item">Study the 200+ line snippet carefully — find all bugs</div>
+    <div class="usage-item">Use Hints only if stuck — avoid them for real practice</div>
+    <div class="usage-item">Click "Reveal Answer" to see all bugs + fixed code</div>
+    <div class="usage-item">Each bug has a line number, severity, and explanation</div>
+    <div class="usage-item">Bugs span: logic, inheritance, static methods, file I/O, exceptions</div>
+  </div>
+</div>
+
+
+<!-- ================================================================== -->
+<!-- CHALLENGE 1: E-COMMERCE ORDER SYSTEM                                -->
+<!-- ================================================================== -->
+<section class="section" id="c1">
+<div class="section-header">
+  <div class="section-num">Challenge 01</div>
+  <h2 class="section-title">E-Commerce Order System</h2>
+  <p class="section-intro">A multi-class order management system with product inventory, discount strategies, order processing, and file-based persistence. Eight bugs are intentionally seeded across inheritance, class variables, exception handling, file I/O, and static methods.</p>
+</div>
+
+<div class="meta-row">
+  <span class="badge badge-hard">Hard</span>
+  <span class="badge badge-lines">210 lines</span>
+  <span class="badge badge-count">8 bugs</span>
+  <span class="badge badge-topic">Inheritance</span>
+  <span class="badge badge-topic">Class Variables</span>
+  <span class="badge badge-topic">File I/O</span>
+  <span class="badge badge-topic">Exceptions</span>
+  <span class="badge badge-topic">Static Methods</span>
+</div>
+
+<div class="task-box">
+  <div class="task-label">Your Task</div>
+  <div class="task-text">This code implements a product/order system. Find and fix ALL bugs. Consider:</div>
+  <ul class="task-list">
+    <li>Does inventory tracking work correctly across all instances?</li>
+    <li>Are discount strategies applied polymorphically and correctly?</li>
+    <li>Is exception handling specific enough — what could be silently swallowed?</li>
+    <li>Will the file persistence work on all platforms? What could go wrong?</li>
+    <li>Are class methods and static methods used correctly?</li>
+    <li>Does the order total calculation account for all edge cases?</li>
+  </ul>
+</div>
+
+<div class="code-block">
+  <div class="code-header">
+    <div class="code-header-left">
+      <span class="code-filename">ecommerce_system.py</span>
+      <span class="code-tag code-tag-buggy">CONTAINS BUGS</span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-copy" onclick="copyBlock('code1',this)">Copy</button>
+    </div>
+  </div>
+  <pre class="language-python" id="code1"><code class="language-python">"""
+E-Commerce Order Management System
+===================================
+Handles products, inventory, discount strategies, orders, and persistence.
+"""
+
+import json
+import os
+from abc import ABC, abstractmethod
+from datetime import datetime
+from typing import List, Optional
+
+
+# ── DISCOUNT STRATEGIES ────────────────────────────────────────────────────
+
+class DiscountStrategy(ABC):
+    @abstractmethod
+    def apply(self, price: float, quantity: int) -> float:
+        """Return the discounted total for price * quantity."""
+
+class NoDiscount(DiscountStrategy):
+    def apply(self, price: float, quantity: int) -> float:
+        return price * quantity
+
+class PercentageDiscount(DiscountStrategy):
+    def __init__(self, percent: float):
+        self.percent = percent
+
+    def apply(self, price: float, quantity: int) -> float:
+        total = price * quantity
+        return total - (total * self.percent / 100)   # BUG 1: should be self.percent / 100
+
+class BulkDiscount(DiscountStrategy):
+    """Apply a flat discount per unit when quantity exceeds a threshold."""
+    def __init__(self, threshold: int, discount_per_unit: float):
+        self.threshold = threshold
+        self.discount_per_unit = discount_per_unit
+
+    def apply(self, price: float, quantity: int) -> float:
+        total = price * quantity
+        if quantity >= self.threshold:
+            total = total - (self.discount_per_unit * quantity)
+        return total
+
+
+# ── PRODUCT ────────────────────────────────────────────────────────────────
+
+class Product:
+    _all_products = []    # BUG 2: class-level mutable list shared across all instances
+
+    def __init__(self, sku: str, name: str, price: float, stock: int):
+        self.sku   = sku
+        self.name  = name
+        self.price = price
+        self.stock = stock
+        self.discount: DiscountStrategy = NoDiscount()
+        Product._all_products.append(self)   # correct use of class variable
+
+    def set_discount(self, strategy: DiscountStrategy):
+        self.discount = strategy
+
+    def reserve(self, qty: int) -> bool:
+        """Reduce stock. Returns False if insufficient stock."""
+        if self.stock >= qty:
+            self.stock = self.stock - qty
+            return True
+        return False
+
+    def restock(self, qty: int):
+        if qty < 0:
+            raise ValueError(f"Restock quantity must be positive, got {qty}")
+        self.stock += qty
+
+    def unit_price(self) -> float:
+        return self.price
+
+    @staticmethod
+    def from_dict(data: dict) -> "Product":
+        return Product(
+            sku=data["sku"],
+            name=data["name"],
+            price=data["price"],
+            stock=data["stock"],
+        )
+
+    @classmethod
+    def find_by_sku(cls, sku: str) -> Optional["Product"]:
+        for p in cls._all_products:
+            if p.sku == sku:
+                return p
+        return None
+
+    def __repr__(self):
+        return f"Product(sku={self.sku!r}, name={self.name!r}, price={self.price}, stock={self.stock})"
+
+
+# ── ORDER LINE ─────────────────────────────────────────────────────────────
+
+class OrderLine:
+    def __init__(self, product: Product, quantity: int):
+        self.product  = product
+        self.quantity = quantity
+
+    def line_total(self) -> float:
+        return self.product.discount.apply(self.product.price, self.quantity)
+
+    def to_dict(self) -> dict:
+        return {"sku": self.product.sku, "quantity": self.quantity,
+                "line_total": self.line_total()}
+
+
+# ── BASE ORDER ─────────────────────────────────────────────────────────────
+
+class BaseOrder(ABC):
+    _order_count = 0
+
+    def __init__(self, customer_id: str):
+        BaseOrder._order_count += 1
+        self.order_id    = f"ORD-{BaseOrder._order_count:05d}"
+        self.customer_id = customer_id
+        self.lines: List[OrderLine] = []
+        self.created_at  = datetime.now().isoformat()
+        self.status      = "pending"
+
+    @abstractmethod
+    def order_type(self) -> str: ...
+
+    def add_line(self, product: Product, quantity: int) -> bool:
+        if quantity <= 0:
+            raise ValueError(f"Quantity must be positive, got {quantity}")
+        reserved = product.reserve(quantity)
+        if reserved:
+            self.lines.append(OrderLine(product, quantity))
+        return reserved
+
+    def total(self) -> float:
+        return sum(line.line_total() for line in self.lines)
+
+    def cancel(self):
+        """Cancel the order and return all stock."""
+        if self.status == "cancelled":
+            raise RuntimeError(f"Order {self.order_id} is already cancelled")
+        for line in self.lines:
+            line.product.restock(line.quantity)
+        self.status = "cancelled"
+
+    def to_dict(self) -> dict:
+        return {
+            "order_id":    self.order_id,
+            "customer_id": self.customer_id,
+            "order_type":  self.order_type(),
+            "status":      self.status,
+            "created_at":  self.created_at,
+            "lines":       [l.to_dict() for l in self.lines],
+            "total":       self.total(),
+        }
+
+
+# ── CONCRETE ORDERS ────────────────────────────────────────────────────────
+
+class RegularOrder(BaseOrder):
+    def order_type(self) -> str:
+        return "regular"
+
+
+class PriorityOrder(BaseOrder):
+    SURCHARGE_RATE = 0.10
+
+    def __init__(self, customer_id: str, express: bool = False):
+        super().__init__(customer_id)    # BUG 3: missing super().__init__ — wait, this IS called
+        self.express = express
+
+    def order_type(self) -> str:
+        return "priority_express" if self.express else "priority"
+
+    def total(self) -> float:
+        base = super().total()
+        return base + base * self.SURCHARGE_RATE
+
+
+class SubscriptionOrder(BaseOrder):
+    MEMBER_DISCOUNT = 15   # BUG 3: should be a float percentage, used as int below
+
+    def __init__(self, customer_id: str, subscription_tier: str):
+        super().__init__(customer_id)
+        self.subscription_tier = subscription_tier
+
+    def order_type(self) -> str:
+        return f"subscription_{self.subscription_tier}"
+
+    def total(self) -> float:
+        base = super().total()
+        return base * (1 - self.MEMBER_DISCOUNT)   # BUG 3: 1 - 15 = -14, should be 1 - 0.15
+
+
+# ── ORDER REPOSITORY ───────────────────────────────────────────────────────
+
+class OrderRepository:
+    def __init__(self, filepath: str):
+        self.filepath = filepath
+        self._orders: dict = {}
+
+    def save(self, order: BaseOrder):
+        self._orders[order.order_id] = order.to_dict()
+        self._flush()
+
+    def _flush(self):
+        with open(self.filepath, "w") as f:   # BUG 4: no encoding specified — platform default, breaks on Windows
+            json.dump(self._orders, f, indent=2)
+
+    def load_all(self) -> dict:
+        if not os.path.exists(self.filepath):
+            return {}
+        with open(self.filepath) as f:         # BUG 5: no encoding specified on read either
+            return json.load(f)
+
+    def delete(self, order_id: str) -> bool:
+        if order_id in self._orders:
+            del self._orders[order_id]
+            self._flush()
+            return True
+        return False
+
+    @staticmethod
+    def validate_order_id(order_id: str) -> bool:
+        return order_id.startswith("ORD-") and len(order_id) == 9  # BUG 6: ORD-00001 is 9 chars — but ORD- is 4 + 5 digits = 9, actually correct... wait: "ORD-" = 4, "00001" = 5, total = 9. This IS correct. Red herring — NOT a bug.
+
+
+# ── ORDER SERVICE ──────────────────────────────────────────────────────────
+
+class OrderService:
+    def __init__(self, repository: OrderRepository):
+        self.repo = repository
+
+    def place_order(self, order: BaseOrder) -> BaseOrder:
+        if not order.lines:
+            raise ValueError("Cannot place an empty order")
+        order.status = "confirmed"
+        self.repo.save(order)
+        return order
+
+    def cancel_order(self, order: BaseOrder):
+        try:
+            order.cancel()
+            self.repo.save(order)
+        except:                         # BUG 7: bare except — swallows KeyboardInterrupt, SystemExit, etc.
+            print("Could not cancel order")
+
+    def get_order_summary(self, order: BaseOrder) -> str:
+        lines_summary = "\n".join(
+            f"  {l.product.name} x{l.quantity} = ${l.line_total():.2f}"
+            for l in order.lines
+        )
+        return (
+            f"Order: {order.order_id} [{order.order_type()}]\n"
+            f"Customer: {order.customer_id}\n"
+            f"Status: {order.status}\n"
+            f"Items:\n{lines_summary}\n"
+            f"Total: ${order.total():.2f}"
+        )
+
+    @staticmethod
+    def apply_bulk_pricing(products: list, threshold: int, discount: float):
+        for product in products:
+            product.set_discount(BulkDiscount(threshold, discount))   # correct
+
+    def export_to_csv(self, orders: list, filepath: str):
+        import csv
+        with open(filepath, "w", newline="") as f:   # BUG 8: no encoding on CSV export
+            writer = csv.DictWriter(f, fieldnames=["order_id","customer_id","order_type","status","total"])
+            writer.writeheader()
+            for order in orders:
+                d = order.to_dict()
+                writer.writerow({k: d[k] for k in writer.fieldnames})
+
+
+# ── DEMO / USAGE ───────────────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    # Products
+    laptop  = Product("LAP-001", "Laptop Pro",  1299.00, 50)
+    mouse   = Product("MOU-001", "Ergonomic Mouse",  49.99, 200)
+    monitor = Product("MON-001", "4K Monitor",  599.00, 30)
+
+    # Apply discounts
+    laptop.set_discount(PercentageDiscount(10))
+    mouse.set_discount(BulkDiscount(threshold=5, discount_per_unit=2.50))
+
+    # Orders
+    repo    = OrderRepository("orders.json")
+    service = OrderService(repo)
+
+    order1 = RegularOrder("CUST-001")
+    order1.add_line(laptop, 1)
+    order1.add_line(mouse, 3)
+    service.place_order(order1)
+    print(service.get_order_summary(order1))
+
+    sub_order = SubscriptionOrder("CUST-002", "gold")
+    sub_order.add_line(monitor, 2)
+    service.place_order(sub_order)
+    print(f"\nSubscription total: ${sub_order.total():.2f}")
+    print(f"Expected (15% off): ${monitor.price * 2 * 0.85:.2f}")
+
+    # Cancel
+    service.cancel_order(order1)
+    print(f"\nOrder1 status: {order1.status}")
+    print(f"Laptop stock after cancel: {laptop.stock}")</code></pre>
+  <div class="code-block-footer">
+    <span class="line-count">210 lines · 8 bugs seeded</span>
+    <button class="btn btn-reveal" id="reveal1" onclick="revealAnswer('answer1','reveal1')">Reveal Answer</button>
+  </div>
+</div>
+
+<div class="hints-section">
+  <div class="hints-header" onclick="toggleHints('hints1body','hbtn1')">
+    <span class="hints-title">💡 Hints (click to show)</span>
+    <button class="hints-toggle" id="hbtn1">Show Hints</button>
+  </div>
+  <div class="hints-body" id="hints1body">
+    <ul class="hints-list">
+      <li>Look at <code class="ic">PercentageDiscount.apply()</code> — does the math produce the right result? Try percent=10 manually.</li>
+      <li>What happens when you run the demo twice in the same Python process? Think about <code class="ic">_all_products</code>.</li>
+      <li><code class="ic">SubscriptionOrder.MEMBER_DISCOUNT = 15</code> — what is <code class="ic">1 - 15</code>?</li>
+      <li>Open a file on Linux vs Windows without specifying encoding. What can go wrong with special characters in product names?</li>
+      <li>In <code class="ic">cancel_order</code>, what exception types does the bare <code class="ic">except:</code> catch that it shouldn't?</li>
+      <li>The CSV export — same encoding issue exists there too.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="answer-section" id="answer1">
+  <div class="answer-divider"><div class="answer-divider-line"></div><div class="answer-divider-label">✓ Answer — All 8 Bugs Explained</div><div class="answer-divider-line"></div></div>
+
+  <div class="bugs-table">
+    <div class="bugs-table-header">
+      <span>#</span><span>Severity</span><span>Line</span><span>Description</span>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">1</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~30</span>
+      <div class="bug-desc">
+        <strong>PercentageDiscount.apply() — logic is actually correct (comment is wrong)</strong>
+        <p><code>total * self.percent / 100</code> IS correct for a percent value like 10 meaning 10%. The inline comment says "should be self.percent / 100" which would mean <code>total - total * 0.10 / 100</code> = 0.001% — this is the real bug. The comment misleads a developer into breaking correct code. Remove the misleading comment; the math is right.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">2</span>
+      <span class="bug-sev bug-sev-crit">CRITICAL</span>
+      <span class="bug-line">~45</span>
+      <div class="bug-desc">
+        <strong>_all_products is a class variable mutable list — shared across all tests/imports</strong>
+        <p>If the module is imported multiple times, or tests run sequentially, <code>_all_products</code> accumulates products across all uses. <code>find_by_sku()</code> may return stale products from previous test runs. Fix: do NOT re-assign in <code>__init__</code>; this IS the intended design. The real fix is: tests must clear <code>Product._all_products.clear()</code> between runs, or use a separate registry per session. Alternatively, make the registry instance-based via a <code>ProductCatalog</code> class.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">3</span>
+      <span class="bug-sev bug-sev-crit">CRITICAL</span>
+      <span class="bug-line">~110</span>
+      <div class="bug-desc">
+        <strong>SubscriptionOrder.MEMBER_DISCOUNT = 15 used as <code>1 - 15 = -14</code></strong>
+        <p><code>base * (1 - self.MEMBER_DISCOUNT)</code> → <code>base * (1 - 15)</code> → <code>base * -14</code>. Every subscription order returns a large negative total. Fix: change to <code>MEMBER_DISCOUNT = 0.15</code> OR change the formula to <code>base * (1 - self.MEMBER_DISCOUNT / 100)</code>.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">4</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~133</span>
+      <div class="bug-desc">
+        <strong>File write without encoding — platform-dependent behaviour</strong>
+        <p><code>open(self.filepath, "w")</code> uses the platform default encoding (cp1252 on Windows, UTF-8 on Linux). Product names with accents (e.g. "Café Machine") will raise <code>UnicodeEncodeError</code> on Windows or silently corrupt data. Fix: <code>open(self.filepath, "w", encoding="utf-8")</code>.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">5</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~138</span>
+      <div class="bug-desc">
+        <strong>File read also missing encoding</strong>
+        <p>Same issue: <code>open(self.filepath)</code> uses platform default. If the file was written as UTF-8 on Linux and read on Windows (cp1252), any non-ASCII character corrupts the JSON parse. Fix: <code>open(self.filepath, encoding="utf-8")</code>.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">6</span>
+      <span class="bug-sev bug-sev-minor">MINOR</span>
+      <span class="bug-line">~144</span>
+      <div class="bug-desc">
+        <strong>validate_order_id length check is brittle — breaks at order #100000</strong>
+        <p><code>len(order_id) == 9</code> works for orders 1–99999 ("ORD-00001" = 9 chars). But <code>_order_count</code> is never reset — in a long-running system, order 100000 becomes "ORD-100000" (10 chars) and fails validation. Fix: use a regex: <code>import re; return bool(re.match(r'^ORD-\d{5,}$', order_id))</code>.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">7</span>
+      <span class="bug-sev bug-sev-crit">CRITICAL</span>
+      <span class="bug-line">~163</span>
+      <div class="bug-desc">
+        <strong>Bare <code>except:</code> in cancel_order swallows KeyboardInterrupt and all errors</strong>
+        <p><code>except:</code> catches <em>everything</em> including <code>KeyboardInterrupt</code>, <code>SystemExit</code>, and programming errors like <code>AttributeError</code>. A double-cancel (already-cancelled order) silently prints "Could not cancel order" instead of surfacing the error. Fix: <code>except RuntimeError as e: logger.error("Cancel failed: %s", e)</code>.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">8</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~176</span>
+      <div class="bug-desc">
+        <strong>CSV export missing encoding parameter</strong>
+        <p><code>open(filepath, "w", newline="")</code> — same platform encoding issue as bugs 4 and 5. Fix: <code>open(filepath, "w", newline="", encoding="utf-8")</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-header-left">
+        <span class="code-filename">ecommerce_system_fixed.py — key fixes only</span>
+        <span class="code-tag code-tag-fixed">FIXED</span>
+      </div>
+      <button class="btn btn-copy" onclick="copyBlock('code1fix',this)">Copy</button>
+    </div>
+    <pre class="language-python" id="code1fix"><code class="language-python"># ── FIX 1: Remove misleading comment from PercentageDiscount ─────────────
+class PercentageDiscount(DiscountStrategy):
+    def __init__(self, percent: float):
+        self.percent = percent
+
+    def apply(self, price: float, quantity: int) -> float:
+        total = price * quantity
+        return total - (total * self.percent / 100)   # CORRECT — no change needed, just remove the wrong comment
+
+
+# ── FIX 2: Replace global class registry with instance-based catalog ──────
+class ProductCatalog:
+    """Own the product registry so it doesn't bleed across test runs."""
+    def __init__(self):
+        self._products: dict[str, Product] = {}
+
+    def register(self, product: "Product"):
+        self._products[product.sku] = product
+
+    def find_by_sku(self, sku: str) -> Optional["Product"]:
+        return self._products.get(sku)
+
+    def all_products(self) -> list:
+        return list(self._products.values())
+
+# Product no longer appends to a class variable:
+class Product:
+    def __init__(self, sku, name, price, stock):
+        self.sku = sku; self.name = name
+        self.price = price; self.stock = stock
+        self.discount: DiscountStrategy = NoDiscount()
+    # ... (rest unchanged, but no _all_products class variable)
+
+
+# ── FIX 3: SubscriptionOrder — use float constant ─────────────────────────
+class SubscriptionOrder(BaseOrder):
+    MEMBER_DISCOUNT = 0.15          # FIX: was 15 (int), now 0.15 (float)
+
+    def total(self) -> float:
+        base = super().total()
+        return base * (1 - self.MEMBER_DISCOUNT)   # now: base * 0.85 — correct 15% off
+
+
+# ── FIX 4 & 5: File I/O with explicit UTF-8 encoding ─────────────────────
+class OrderRepository:
+    def _flush(self):
+        with open(self.filepath, "w", encoding="utf-8") as f:    # FIX 4
+            json.dump(self._orders, f, indent=2)
+
+    def load_all(self) -> dict:
+        if not os.path.exists(self.filepath):
+            return {}
+        with open(self.filepath, encoding="utf-8") as f:          # FIX 5
+            return json.load(f)
+
+
+# ── FIX 6: Robust order ID validation ────────────────────────────────────
+import re
+
+class OrderRepository:
+    @staticmethod
+    def validate_order_id(order_id: str) -> bool:
+        return bool(re.match(r'^ORD-\d{5,}$', order_id))   # FIX: works for any length
+
+
+# ── FIX 7: Specific exception in cancel_order ────────────────────────────
+import logging
+logger = logging.getLogger(__name__)
+
+class OrderService:
+    def cancel_order(self, order: BaseOrder):
+        try:
+            order.cancel()
+            self.repo.save(order)
+        except RuntimeError as e:              # FIX: specific — lets KeyboardInterrupt through
+            logger.error("Order cancel failed for %s: %s", order.order_id, e)
+            raise                              # re-raise so caller knows it failed
+
+
+# ── FIX 8: CSV export with encoding ──────────────────────────────────────
+    def export_to_csv(self, orders: list, filepath: str):
+        import csv
+        with open(filepath, "w", newline="", encoding="utf-8") as f:   # FIX 8
+            writer = csv.DictWriter(
+                f, fieldnames=["order_id","customer_id","order_type","status","total"]
+            )
+            writer.writeheader()
+            for order in orders:
+                d = order.to_dict()
+                writer.writerow({k: d[k] for k in writer.fieldnames})</code></pre>
+  </div>
+
+  <div class="takeaways">
+    <div class="takeaways-label">Key Takeaways from Challenge 01</div>
+    <ul class="takeaways-list">
+      <li>Class-level mutable lists (<code class="ic">_all_products = []</code>) persist across the module's lifetime — use instance-owned registries for anything that should be scoped</li>
+      <li>Integer constants used as percentages (<code class="ic">15</code> vs <code class="ic">0.15</code>) are silent math bombs — always validate units in code review</li>
+      <li>Bare <code class="ic">except:</code> is never acceptable — it swallows <code class="ic">KeyboardInterrupt</code>, making the program unkillable</li>
+      <li>Every file open must specify <code class="ic">encoding="utf-8"</code> — platform defaults differ between Linux, macOS, and Windows</li>
+      <li>Length-based string validation (<code class="ic">len == 9</code>) is brittle — use regex for structured ID formats</li>
+      <li>Misleading comments are bugs too — a correct line with a wrong comment causes developers to "fix" it into a real bug</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+
+<!-- ================================================================== -->
+<!-- CHALLENGE 2: BANKING SYSTEM                                          -->
+<!-- ================================================================== -->
+<section class="section" id="c2">
+<div class="section-header">
+  <div class="section-num">Challenge 02</div>
+  <h2 class="section-title">Banking &amp; Account System</h2>
+  <p class="section-intro">A multi-account banking system with inheritance, transaction history, interest calculations, and serialisation. Seven bugs across properties, class methods, exception chaining, __slots__, and numeric precision.</p>
+</div>
+
+<div class="meta-row">
+  <span class="badge badge-hard">Hard</span>
+  <span class="badge badge-lines">220 lines</span>
+  <span class="badge badge-count">7 bugs</span>
+  <span class="badge badge-topic">Properties</span>
+  <span class="badge badge-topic">__slots__</span>
+  <span class="badge badge-topic">Exception Chaining</span>
+  <span class="badge badge-topic">Decimal Precision</span>
+  <span class="badge badge-topic">classmethod</span>
+</div>
+
+<div class="task-box">
+  <div class="task-label">Your Task</div>
+  <div class="task-text">This banking system has 7 bugs. Find them all before checking the answer.</div>
+  <ul class="task-list">
+    <li>Does the balance property setter correctly validate all invalid inputs?</li>
+    <li>Will __slots__ actually save memory as intended across the hierarchy?</li>
+    <li>Is floating-point arithmetic appropriate for financial calculations?</li>
+    <li>Does exception chaining preserve the original error context?</li>
+    <li>Is the interest rate a class variable or instance variable — and does it matter?</li>
+    <li>What happens when you call <code class="ic">transfer()</code> and the destination account doesn't exist?</li>
+    <li>Does the transaction log grow unboundedly? Is that intentional?</li>
+  </ul>
+</div>
+
+<div class="code-block">
+  <div class="code-header">
+    <div class="code-header-left">
+      <span class="code-filename">banking_system.py</span>
+      <span class="code-tag code-tag-buggy">CONTAINS BUGS</span>
+    </div>
+    <button class="btn btn-copy" onclick="copyBlock('code2',this)">Copy</button>
+  </div>
+  <pre class="language-python" id="code2"><code class="language-python">"""
+Banking Account System
+======================
+Supports checking, savings, and investment accounts with full transaction history.
+"""
+
+import json
+import os
+from decimal import Decimal, ROUND_HALF_UP
+from datetime import datetime
+from typing import List, Optional, Dict
+from abc import ABC, abstractmethod
+
+
+# ── TRANSACTION ────────────────────────────────────────────────────────────
+
+class Transaction:
+    __slots__ = ("txn_id", "amount", "txn_type", "timestamp", "note")
+
+    _counter = 0   # BUG 1: class variable on a __slots__ class works, but _counter
+                   # is NOT in __slots__ — this will actually FAIL because class vars
+                   # are stored on the class itself (not instances), so it's fine.
+                   # However the real BUG is: __slots__ on Transaction but NOT on
+                   # subclasses means subclasses get __dict__ back — defeating the purpose.
+
+    def __init__(self, amount: Decimal, txn_type: str, note: str = ""):
+        Transaction._counter += 1
+        self.txn_id    = f"TXN-{Transaction._counter:08d}"
+        self.amount    = amount
+        self.txn_type  = txn_type
+        self.timestamp = datetime.now().isoformat()
+        self.note      = note
+
+    def to_dict(self) -> dict:
+        return {
+            "txn_id":    self.txn_id,
+            "amount":    str(self.amount),
+            "txn_type":  self.txn_type,
+            "timestamp": self.timestamp,
+            "note":      self.note,
+        }
+
+
+class CreditTransaction(Transaction):
+    # BUG 1 (real): No __slots__ here — __dict__ re-appears, slots savings lost
+    def __init__(self, amount: Decimal, note: str = ""):
+        super().__init__(amount, "credit", note)
+        self.is_credit = True   # stored in __dict__ now — not in slot
+
+class DebitTransaction(Transaction):
+    # BUG 1 (real): Same issue — no __slots__
+    def __init__(self, amount: Decimal, note: str = ""):
+        super().__init__(amount, "debit", note)
+        self.is_debit = True
+
+
+# ── BASE ACCOUNT ───────────────────────────────────────────────────────────
+
+class BankAccount(ABC):
+    _interest_rate: float = 0.02   # class variable — 2% default
+
+    def __init__(self, account_id: str, owner: str, initial_balance: float = 0.0):
+        self.account_id = account_id
+        self.owner      = owner
+        self._balance   = Decimal(str(initial_balance))
+        self._history: List[Transaction] = []
+
+    @property
+    def balance(self) -> Decimal:
+        return self._balance
+
+    @balance.setter
+    def balance(self, value):
+        if value < 0:              # BUG 2: value is Decimal but compared to int 0 — works,
+            raise ValueError(...)  #        but the REAL BUG is the setter never validates
+                                   #        non-numeric types. Passing a string silently fails.
+            pass
+        self._balance = Decimal(str(value))
+
+    @classmethod
+    def set_interest_rate(cls, rate: float):
+        cls._interest_rate = rate   # BUG 3: sets rate on the SPECIFIC subclass called on,
+                                    # not on BankAccount. Calling SavingsAccount.set_interest_rate(0.05)
+                                    # only changes SavingsAccount._interest_rate, leaving
+                                    # CheckingAccount at 0.02. Intentional? Probably not.
+
+    @abstractmethod
+    def account_type(self) -> str: ...
+
+    def deposit(self, amount: float, note: str = "") -> CreditTransaction:
+        if amount <= 0:
+            raise ValueError(f"Deposit amount must be positive, got {amount}")
+        d_amount = Decimal(str(amount))
+        self._balance += d_amount
+        txn = CreditTransaction(d_amount, note or f"Deposit to {self.account_id}")
+        self._history.append(txn)
+        return txn
+
+    def withdraw(self, amount: float, note: str = "") -> DebitTransaction:
+        d_amount = Decimal(str(amount))
+        if d_amount > self._balance:
+            raise ValueError(f"Insufficient funds: balance={self._balance}, requested={d_amount}")
+        self._balance -= d_amount
+        txn = DebitTransaction(d_amount, note or f"Withdrawal from {self.account_id}")
+        self._history.append(txn)
+        return txn
+
+    def get_history(self) -> List[dict]:
+        return [t.to_dict() for t in self._history]
+
+    def statement(self) -> str:
+        lines = [f"=== {self.account_type()} Account: {self.account_id} ===",
+                 f"Owner: {self.owner}",
+                 f"Balance: {self._balance}",
+                 "--- Transactions ---"]
+        for t in self._history:
+            sign = "+" if t.txn_type == "credit" else "-"
+            lines.append(f"  {t.timestamp[:10]}  {sign}{t.amount:>12}  {t.note}")
+        return "\n".join(lines)
+
+    def to_dict(self) -> dict:
+        return {
+            "account_id":   self.account_id,
+            "owner":        self.owner,
+            "account_type": self.account_type(),
+            "balance":      str(self._balance),
+            "history":      self.get_history(),
+        }
+
+
+# ── CHECKING ACCOUNT ───────────────────────────────────────────────────────
+
+class CheckingAccount(BankAccount):
+    def __init__(self, account_id: str, owner: str,
+                 initial_balance: float = 0.0, overdraft_limit: float = 0.0):
+        super().__init__(account_id, owner, initial_balance)
+        self.overdraft_limit = Decimal(str(overdraft_limit))
+
+    def account_type(self) -> str:
+        return "Checking"
+
+    def withdraw(self, amount: float, note: str = "") -> DebitTransaction:
+        d_amount = Decimal(str(amount))
+        if d_amount > self._balance + self.overdraft_limit:
+            raise ValueError(
+                f"Exceeds overdraft limit: balance={self._balance}, "
+                f"limit={self.overdraft_limit}, requested={d_amount}"
+            )
+        self._balance -= d_amount
+        txn = DebitTransaction(d_amount, note or f"Checking withdrawal {self.account_id}")
+        self._history.append(txn)
+        return txn
+
+
+# ── SAVINGS ACCOUNT ────────────────────────────────────────────────────────
+
+class SavingsAccount(BankAccount):
+    _interest_rate: float = 0.04   # overrides class default for savings
+
+    def __init__(self, account_id: str, owner: str,
+                 initial_balance: float = 0.0, min_balance: float = 100.0):
+        super().__init__(account_id, owner, initial_balance)
+        self.min_balance = Decimal(str(min_balance))
+
+    def account_type(self) -> str:
+        return "Savings"
+
+    def withdraw(self, amount: float, note: str = "") -> DebitTransaction:
+        d_amount = Decimal(str(amount))
+        if (self._balance - d_amount) < self.min_balance:
+            raise ValueError(
+                f"Withdrawal would breach minimum balance of {self.min_balance}"
+            )
+        self._balance -= d_amount
+        txn = DebitTransaction(d_amount, note or f"Savings withdrawal {self.account_id}")
+        self._history.append(txn)
+        return txn
+
+    def apply_interest(self) -> CreditTransaction:
+        interest = (self._balance * Decimal(str(self._interest_rate))).quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
+        self._balance += interest
+        txn = CreditTransaction(interest, "Monthly interest")
+        self._history.append(txn)
+        return txn
+
+
+# ── INVESTMENT ACCOUNT ─────────────────────────────────────────────────────
+
+class InvestmentAccount(BankAccount):
+    CAPITAL_GAINS_TAX = 0.20
+
+    def __init__(self, account_id: str, owner: str,
+                 initial_balance: float = 0.0, risk_level: str = "medium"):
+        super().__init__(account_id, owner, initial_balance)
+        self.risk_level = risk_level
+        self._unrealised_gains = Decimal("0")
+
+    def account_type(self) -> str:
+        return f"Investment ({self.risk_level})"
+
+    def record_gain(self, amount: float):
+        self._unrealised_gains += Decimal(str(amount))
+
+    def realise_gains(self) -> Optional[CreditTransaction]:
+        if self._unrealised_gains <= 0:
+            return None
+        tax = (self._unrealised_gains * Decimal(str(self.CAPITAL_GAINS_TAX))).quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
+        net_gain = self._unrealised_gains - tax
+        self._balance  += net_gain
+        self._unrealised_gains = Decimal("0")
+        txn = CreditTransaction(net_gain, f"Realised gains (tax={tax})")
+        self._history.append(txn)
+        return txn
+
+
+# ── BANK / TRANSFER SERVICE ────────────────────────────────────────────────
+
+class Bank:
+    def __init__(self, name: str):
+        self.name = name
+        self._accounts: Dict[str, BankAccount] = {}
+
+    def open_account(self, account: BankAccount):
+        if account.account_id in self._accounts:
+            raise ValueError(f"Account {account.account_id} already exists")
+        self._accounts[account.account_id] = account
+
+    def get_account(self, account_id: str) -> BankAccount:
+        account = self._accounts.get(account_id)
+        if account is None:
+            raise KeyError(f"Account {account_id!r} not found")   # BUG 4: should raise a domain error
+                                                                    # KeyError leaks implementation detail
+        return account
+
+    def transfer(self, from_id: str, to_id: str, amount: float, note: str = ""):
+        try:
+            src = self.get_account(from_id)
+            dst = self.get_account(to_id)
+        except KeyError as e:
+            raise ValueError(f"Transfer failed: {e}")   # BUG 5: raise ... from e is missing
+                                                          # Original traceback lost
+
+        try:
+            src.withdraw(amount, note=f"Transfer to {to_id}: {note}")
+            dst.deposit(amount, note=f"Transfer from {from_id}: {note}")
+        except ValueError as e:
+            raise RuntimeError(f"Transfer of {amount} failed: {e}") from e   # correct chaining
+
+    def save_all(self, directory: str):
+        os.makedirs(directory, exist_ok=True)
+        for acc_id, acc in self._accounts.items():
+            path = os.path.join(directory, f"{acc_id}.json")
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(acc.to_dict(), f, indent=2)
+
+    def total_deposits(self) -> Decimal:
+        return sum(acc.balance for acc in self._accounts.values())  # BUG 6: sum() starts at int 0,
+                                                                      # adding Decimal to int 0 works in Python
+                                                                      # BUT if _accounts is empty, returns int 0
+                                                                      # not Decimal("0") — type inconsistency
+    def monthly_interest_run(self):
+        for acc in self._accounts.values():
+            if isinstance(acc, SavingsAccount):
+                acc.apply_interest()
+            # BUG 7: InvestmentAccount gains are never processed here
+            # The method is named "monthly_interest_run" but ignores InvestmentAccounts entirely
+
+
+# ── DEMO ───────────────────────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    bank = Bank("PyBank")
+
+    chk = CheckingAccount("CHK-001", "Alice", initial_balance=2000.0, overdraft_limit=500.0)
+    sav = SavingsAccount("SAV-001", "Alice", initial_balance=5000.0)
+    inv = InvestmentAccount("INV-001", "Bob",  initial_balance=10000.0, risk_level="high")
+
+    bank.open_account(chk)
+    bank.open_account(sav)
+    bank.open_account(inv)
+
+    chk.deposit(500.0, "Salary")
+    chk.withdraw(200.0, "Rent")
+    bank.transfer("CHK-001", "SAV-001", 300.0, "Monthly savings")
+
+    sav.apply_interest()
+    inv.record_gain(2500.0)
+    inv.realise_gains()
+
+    bank.monthly_interest_run()
+
+    print(chk.statement())
+    print()
+    print(sav.statement())
+    print(f"\nBank total deposits: {bank.total_deposits()}")
+    bank.save_all("bank_data")</code></pre>
+  <div class="code-block-footer">
+    <span class="line-count">220 lines · 7 bugs seeded</span>
+    <button class="btn btn-reveal" id="reveal2" onclick="revealAnswer('answer2','reveal2')">Reveal Answer</button>
+  </div>
+</div>
+
+<div class="hints-section">
+  <div class="hints-header" onclick="toggleHints('hints2body','hbtn2')">
+    <span class="hints-title">💡 Hints (click to show)</span>
+    <button class="hints-toggle" id="hbtn2">Show Hints</button>
+  </div>
+  <div class="hints-body" id="hints2body">
+    <ul class="hints-list">
+      <li>If <code class="ic">Transaction</code> defines <code class="ic">__slots__</code> but <code class="ic">CreditTransaction</code> doesn't — what happens to memory savings?</li>
+      <li><code class="ic">balance.setter</code> checks <code class="ic">value &lt; 0</code> — what if someone passes a string like <code class="ic">"100"</code>?</li>
+      <li><code class="ic">cls._interest_rate = rate</code> inside a classmethod — what does <code class="ic">cls</code> refer to when called on a subclass?</li>
+      <li>In <code class="ic">transfer()</code>, the <code class="ic">except KeyError</code> re-raises as ValueError — is exception chaining preserved?</li>
+      <li><code class="ic">sum(acc.balance for ...)</code> — what does Python's <code class="ic">sum()</code> use as its initial value?</li>
+      <li>Does <code class="ic">monthly_interest_run()</code> handle ALL account types?</li>
+      <li><code class="ic">get_account()</code> raises <code class="ic">KeyError</code> — is that the right exception type for a domain operation?</li>
+    </ul>
+  </div>
+</div>
+
+<div class="answer-section" id="answer2">
+  <div class="answer-divider"><div class="answer-divider-line"></div><div class="answer-divider-label">✓ Answer — All 7 Bugs Explained</div><div class="answer-divider-line"></div></div>
+
+  <div class="bugs-table">
+    <div class="bugs-table-header"><span>#</span><span>Severity</span><span>Line</span><span>Description</span></div>
+    <div class="bug-row">
+      <span class="bug-num">1</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~22</span>
+      <div class="bug-desc">
+        <strong>__slots__ on Transaction but NOT on CreditTransaction/DebitTransaction — __dict__ reappears</strong>
+        <p>When a subclass doesn't define <code>__slots__</code>, Python adds <code>__dict__</code> to it regardless of the parent. The memory savings from <code>Transaction.__slots__</code> are silently lost for every CreditTransaction and DebitTransaction instance. Fix: add <code>__slots__ = ("is_credit",)</code> to CreditTransaction and <code>__slots__ = ("is_debit",)</code> to DebitTransaction.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">2</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~72</span>
+      <div class="bug-desc">
+        <strong>balance.setter validates sign but not type — passing a string raises confusing TypeError</strong>
+        <p><code>if value &lt; 0</code> will raise <code>TypeError: '&lt;' not supported between instances of 'str' and 'int'</code> if a string is passed — instead of a clear <code>ValueError</code>. Fix: <code>if not isinstance(value, (int, float, Decimal)): raise TypeError(...)</code> before the sign check. Also note the setter body has <code>raise ValueError(...)</code> followed by unreachable <code>pass</code> — the pass is dead code.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">3</span>
+      <span class="bug-sev bug-sev-minor">MINOR</span>
+      <span class="bug-line">~79</span>
+      <div class="bug-desc">
+        <strong>set_interest_rate() with cls updates only the subclass, not BankAccount — silently splits rates</strong>
+        <p>Calling <code>SavingsAccount.set_interest_rate(0.05)</code> sets <code>SavingsAccount._interest_rate = 0.05</code> but <code>CheckingAccount._interest_rate</code> stays at 0.02. This is because <code>cls</code> refers to the class the method is called on. If the intent is to update all accounts globally, use <code>BankAccount._interest_rate = rate</code> explicitly. Document this behaviour clearly either way.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">4</span>
+      <span class="bug-sev bug-sev-minor">MINOR</span>
+      <span class="bug-line">~168</span>
+      <div class="bug-desc">
+        <strong>get_account() raises KeyError — implementation detail leaks to callers</strong>
+        <p><code>KeyError</code> is a dict lookup error. Domain code should raise domain exceptions. Callers expecting account-not-found should handle <code>AccountNotFoundError</code>, not catch dict KeyErrors. Fix: define <code>class AccountNotFoundError(ValueError): pass</code> and raise that instead.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">5</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~176</span>
+      <div class="bug-desc">
+        <strong>Exception chaining missing — <code>raise ValueError(...)</code> should be <code>raise ValueError(...) from e</code></strong>
+        <p>In <code>transfer()</code>, the <code>except KeyError</code> re-raises as <code>ValueError</code> but the original exception context is lost. Debugging shows a ValueError with no information about which account was missing or the original KeyError. Fix: <code>raise ValueError(f"Transfer failed: {e}") from e</code> — this links the exceptions so both appear in the traceback.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">6</span>
+      <span class="bug-sev bug-sev-minor">MINOR</span>
+      <span class="bug-line">~189</span>
+      <div class="bug-desc">
+        <strong>sum() returns int 0 for empty accounts — type inconsistency with Decimal</strong>
+        <p><code>sum(acc.balance for acc in self._accounts.values())</code> uses Python's default <code>sum()</code> start value of <code>0</code> (int). When there are no accounts, it returns <code>0</code> (int) not <code>Decimal("0")</code>. Any downstream code that calls <code>isinstance(result, Decimal)</code> or does Decimal-specific formatting will fail. Fix: <code>sum(..., Decimal("0"))</code>.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">7</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~193</span>
+      <div class="bug-desc">
+        <strong>monthly_interest_run() silently ignores InvestmentAccount — incomplete business logic</strong>
+        <p>The method only calls <code>apply_interest()</code> on SavingsAccounts. InvestmentAccounts are completely skipped — their monthly gains are never processed. This is a silent omission — no error, no warning, just incorrect business behaviour. Fix: add <code>elif isinstance(acc, InvestmentAccount): acc.realise_gains()</code> or document explicitly that investment accounts are excluded.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="takeaways">
+    <div class="takeaways-label">Key Takeaways from Challenge 02</div>
+    <ul class="takeaways-list">
+      <li>For <code class="ic">__slots__</code> memory savings, EVERY class in the inheritance chain must define <code class="ic">__slots__</code></li>
+      <li>Type validation in setters must come BEFORE comparison — <code class="ic">isinstance()</code> check first, then sign check</li>
+      <li><code class="ic">cls._attr = value</code> in a classmethod updates only that class, not the base class — know which you want</li>
+      <li>Raise domain exceptions from domain code — never let <code class="ic">KeyError</code> or <code class="ic">IndexError</code> propagate as your API's error contract</li>
+      <li>Always use <code class="ic">raise NewError(...) from original_error</code> when translating exceptions — preserve the cause chain</li>
+      <li><code class="ic">sum(generator)</code> → use <code class="ic">sum(gen, Decimal("0"))</code> when you need a specific type for the empty case</li>
+      <li>When adding new subclasses, audit every method that uses <code class="ic">isinstance()</code> — new types are silently excluded from existing branches</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+
+<!-- ================================================================== -->
+<!-- CHALLENGE 3: PLUGIN FRAMEWORK                                        -->
+<!-- ================================================================== -->
+<section class="section" id="c3">
+<div class="section-header">
+  <div class="section-num">Challenge 03</div>
+  <h2 class="section-title">Plugin Framework</h2>
+  <p class="section-intro">A self-registering plugin framework using <code class="ic">__init_subclass__</code>, abstract methods, metaclasses, and dynamic loading. Eight bugs across metaclass interaction, cooperative super(), abstract enforcement, and class-level state.</p>
+</div>
+
+<div class="meta-row">
+  <span class="badge badge-hard">Hard</span>
+  <span class="badge badge-lines">215 lines</span>
+  <span class="badge badge-count">8 bugs</span>
+  <span class="badge badge-topic">__init_subclass__</span>
+  <span class="badge badge-topic">Metaclass</span>
+  <span class="badge badge-topic">ABC</span>
+  <span class="badge badge-topic">Cooperative super()</span>
+  <span class="badge badge-topic">Class Registry</span>
+</div>
+
+<div class="task-box">
+  <div class="task-label">Your Task</div>
+  <div class="task-text">Find all 8 bugs in this plugin registration framework.</div>
+  <ul class="task-list">
+    <li>Will the plugin registry accumulate correctly as plugins are defined?</li>
+    <li>Can you instantiate the abstract PluginBase — and should you be able to?</li>
+    <li>Does the version validation run for all plugin subclasses?</li>
+    <li>If two plugins share the same name, what happens?</li>
+    <li>Does cooperative <code class="ic">super().__init_subclass__()</code> get called correctly?</li>
+    <li>Will the plugin runner handle exceptions from misbehaving plugins safely?</li>
+    <li>Is the plugin state thread-safe? (hint: class-level mutable dict)</li>
+    <li>What does <code class="ic">@classmethod</code> + <code class="ic">__init_subclass__</code> do differently from a metaclass?</li>
+  </ul>
+</div>
+
+<div class="code-block">
+  <div class="code-header">
+    <div class="code-header-left">
+      <span class="code-filename">plugin_framework.py</span>
+      <span class="code-tag code-tag-buggy">CONTAINS BUGS</span>
+    </div>
+    <button class="btn btn-copy" onclick="copyBlock('code3',this)">Copy</button>
+  </div>
+  <pre class="language-python" id="code3"><code class="language-python">"""
+Plugin Framework
+================
+Self-registering plugin system with version validation, priority ordering,
+hooks, dependency checking, and a plugin runner.
+"""
+
+import re
+import sys
+import logging
+import traceback
+from abc import ABC, abstractmethod
+from typing import Dict, List, Optional, Any, Callable
+
+logger = logging.getLogger(__name__)
+
+
+# ── PLUGIN METADATA ────────────────────────────────────────────────────────
+
+class PluginMeta:
+    """Value object holding plugin metadata."""
+    def __init__(self, name: str, version: str, author: str,
+                 description: str = "", requires: List[str] = None):
+        self.name        = name
+        self.version     = version
+        self.author      = author
+        self.description = description
+        self.requires    = requires or []     # BUG 1: default mutable arg — but 'or []'
+                                               # makes a new list each time, so this is FINE.
+                                               # NOT a bug — common pattern to handle it.
+
+    def validate(self) -> bool:
+        if not self.name or not self.name.strip():
+            return False
+        if not re.match(r'^\d+\.\d+\.\d+$', self.version):   # semantic version check
+            return False
+        if not self.author:
+            return False
+        return True
+
+
+# ── PLUGIN BASE ────────────────────────────────────────────────────────────
+
+class PluginBase(ABC):
+    _registry: Dict[str, type] = {}     # BUG 2: shared class-level dict — all subclasses
+                                         # share the SAME dict object (not per-subclass dicts).
+                                         # This is actually INTENDED for a registry — but
+                                         # the real bug is: dict is not thread-safe for concurrent
+                                         # registration (no lock). We'll call this an architectural note.
+
+    _execution_log: List[str] = []      # BUG 3: class-level mutable list shared across
+                                         # ALL plugin instances AND all test runs.
+                                         # Should be per-instance or cleared between runs.
+
+    def __init_subclass__(cls, plugin_name: str = None, priority: int = 0, **kwargs):
+        super().__init_subclass__(**kwargs)    # BUG 4: this IS correct — cooperative call.
+                                                # But if ANY intermediate class forgets to pass
+                                                # **kwargs, lower-priority __init_subclass__ hooks
+                                                # in the MRO will never fire.
+        if plugin_name:
+            if plugin_name in PluginBase._registry:
+                logger.warning("Plugin %r already registered — overwriting", plugin_name)
+                                                # BUG 5: should RAISE, not just warn.
+                                                # Duplicate plugin names silently overwrite the previous.
+            meta_attr = getattr(cls, 'META', None)
+            if meta_attr and not meta_attr.validate():
+                raise TypeError(f"Plugin {plugin_name!r} has invalid metadata")
+            cls._plugin_name = plugin_name
+            cls._priority    = priority
+            PluginBase._registry[plugin_name] = cls
+
+    @abstractmethod
+    def execute(self, context: dict) -> Any:
+        """Run the plugin with the given context. Must return a result."""
+
+    @abstractmethod
+    def name(self) -> str:              # BUG 6: name() is abstract, but _plugin_name is
+                                         # set as a class attribute in __init_subclass__.
+                                         # Concrete plugins can implement name() returning
+                                         # self._plugin_name — but they MUST remember to
+                                         # implement it even though the value is already there.
+                                         # Better: make name() a concrete property using _plugin_name.
+        """Return the plugin's registered name."""
+
+    @classmethod
+    def get_plugin(cls, name: str) -> Optional[type]:
+        return cls._registry.get(name)
+
+    @classmethod
+    def all_plugins(cls) -> List[type]:
+        return sorted(cls._registry.values(), key=lambda c: c._priority, reverse=True)
+
+    @classmethod
+    def clear_registry(cls):
+        cls._registry.clear()
+        cls._execution_log.clear()
+
+
+# ── PLUGIN RUNNER ──────────────────────────────────────────────────────────
+
+class PluginRunner:
+    def __init__(self, plugins: List[PluginBase]):
+        self.plugins = plugins
+
+    def run_all(self, context: dict) -> Dict[str, Any]:
+        results = {}
+        for plugin in self.plugins:
+            try:
+                result = plugin.execute(context)
+                results[plugin.name()] = result
+                PluginBase._execution_log.append(
+                    f"[OK] {plugin.name()} → {result!r}"
+                )
+            except Exception:           # BUG 7: too broad — catches ALL exceptions including
+                                         # programming errors like AttributeError from a typo.
+                                         # Should catch a specific PluginExecutionError.
+                logger.error("Plugin %s failed", plugin.name())
+                results[plugin.name()] = None
+        return results
+
+    def run_one(self, name: str, context: dict) -> Any:
+        plugin_cls = PluginBase.get_plugin(name)
+        if plugin_cls is None:
+            raise KeyError(f"No plugin registered as {name!r}")   # BUG 8: KeyError for
+                                                                    # domain logic — should be
+                                                                    # PluginNotFoundError(ValueError)
+        instance = plugin_cls()
+        return instance.execute(context)
+
+
+# ── CONCRETE PLUGINS ───────────────────────────────────────────────────────
+
+class UpperCasePlugin(PluginBase, plugin_name="uppercase", priority=10):
+    META = PluginMeta("uppercase", "1.0.0", "Dev Team", "Converts text to uppercase")
+
+    def name(self) -> str:
+        return self._plugin_name
+
+    def execute(self, context: dict) -> str:
+        text = context.get("text", "")
+        return text.upper()
+
+
+class WordCountPlugin(PluginBase, plugin_name="wordcount", priority=5):
+    META = PluginMeta("wordcount", "1.2.0", "Dev Team", "Counts words in text")
+
+    def name(self) -> str:
+        return self._plugin_name
+
+    def execute(self, context: dict) -> int:
+        text = context.get("text", "")
+        return len(text.split())
+
+
+class SentimentPlugin(PluginBase, plugin_name="sentiment", priority=8):
+    META = PluginMeta("sentiment", "2.0.0", "ML Team",
+                       "Basic sentiment: positive/negative/neutral",
+                       requires=["wordcount"])
+
+    POSITIVE_WORDS = {"great", "excellent", "good", "love", "amazing"}
+    NEGATIVE_WORDS = {"bad", "terrible", "hate", "awful", "poor"}
+
+    def name(self) -> str:
+        return self._plugin_name
+
+    def execute(self, context: dict) -> str:
+        words = set(context.get("text", "").lower().split())
+        pos = len(words & self.POSITIVE_WORDS)
+        neg = len(words & self.NEGATIVE_WORDS)
+        if pos > neg:   return "positive"
+        if neg > pos:   return "negative"
+        return "neutral"
+
+    def check_dependencies(self) -> bool:
+        for dep in self.META.requires:
+            if dep not in PluginBase._registry:
+                return False
+        return True
+
+
+class PipelinePlugin(PluginBase, plugin_name="pipeline", priority=1):
+    """Runs a list of named plugins in sequence, passing output as input."""
+    META = PluginMeta("pipeline", "1.0.0", "Dev Team",
+                       "Chains multiple plugins together")
+
+    def __init__(self, pipeline_names: List[str]):
+        self.pipeline_names = pipeline_names
+
+    def name(self) -> str:
+        return self._plugin_name
+
+    def execute(self, context: dict) -> List[Any]:
+        results = []
+        ctx = dict(context)   # copy so we don't mutate caller's context
+        for pname in self.pipeline_names:
+            plugin_cls = PluginBase.get_plugin(pname)
+            if plugin_cls is None:
+                raise ValueError(f"Pipeline step {pname!r} not found")
+            result = plugin_cls().execute(ctx)
+            ctx["previous_result"] = result
+            results.append((pname, result))
+        return results
+
+
+# ── DEMO ───────────────────────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    print("Registered plugins:", list(PluginBase._registry.keys()))
+    print("By priority:", [c.__name__ for c in PluginBase.all_plugins()])
+
+    context = {"text": "Python is great and amazing for building excellent tools"}
+
+    # Run all via runner
+    instances = [cls() for cls in PluginBase.all_plugins()
+                 if cls not in (PipelinePlugin,)]   # exclude pipeline for simple demo
+    runner = PluginRunner(instances)
+    results = runner.run_all(context)
+    for name, result in results.items():
+        print(f"  {name}: {result}")
+
+    # Pipeline
+    pipe = PipelinePlugin(["uppercase", "wordcount"])
+    pipe_result = pipe.execute(context)
+    print("\nPipeline result:", pipe_result)
+
+    print("\nExecution log:")
+    for entry in PluginBase._execution_log:
+        print(" ", entry)</code></pre>
+  <div class="code-block-footer">
+    <span class="line-count">215 lines · 8 bugs seeded</span>
+    <button class="btn btn-reveal" id="reveal3" onclick="revealAnswer('answer3','reveal3')">Reveal Answer</button>
+  </div>
+</div>
+
+<div class="hints-section">
+  <div class="hints-header" onclick="toggleHints('hints3body','hbtn3')">
+    <span class="hints-title">💡 Hints (click to show)</span>
+    <button class="hints-toggle" id="hbtn3">Show Hints</button>
+  </div>
+  <div class="hints-body" id="hints3body">
+    <ul class="hints-list">
+      <li>What happens to <code class="ic">_execution_log</code> if you run tests twice in the same process?</li>
+      <li>Two plugins with the same name — which one wins? Is that acceptable in a production framework?</li>
+      <li><code class="ic">name()</code> is abstract but <code class="ic">_plugin_name</code> is already set as a class attribute — is that duplication necessary?</li>
+      <li>In <code class="ic">run_all()</code>, an AttributeError inside a plugin's <code class="ic">execute()</code> is caught by <code class="ic">except Exception</code> — how would you debug that?</li>
+      <li>In <code class="ic">run_one()</code>, what exception should be raised for a missing plugin?</li>
+      <li>What if a plugin raises <code class="ic">KeyboardInterrupt</code> inside <code class="ic">execute()</code> — does <code class="ic">run_all()</code> handle that correctly?</li>
+    </ul>
+  </div>
+</div>
+
+<div class="answer-section" id="answer3">
+  <div class="answer-divider"><div class="answer-divider-line"></div><div class="answer-divider-label">✓ Answer — All 8 Bugs Explained</div><div class="answer-divider-line"></div></div>
+
+  <div class="bugs-table">
+    <div class="bugs-table-header"><span>#</span><span>Severity</span><span>Line</span><span>Description</span></div>
+    <div class="bug-row">
+      <span class="bug-num">1</span>
+      <span class="bug-sev bug-sev-minor">MINOR</span>
+      <span class="bug-line">~22</span>
+      <div class="bug-desc">
+        <strong>PluginMeta default mutable arg — false alarm, handled correctly</strong>
+        <p>The <code>requires=None</code> + <code>or []</code> pattern is correct. This is NOT a bug. However in code review this must be explicitly noted — reviewers who only see <code>requires: List[str] = None</code> in a type annotation may question it.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">2</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~41</span>
+      <div class="bug-desc">
+        <strong>_execution_log is a class-level list — persists across all runs and all instances</strong>
+        <p>Every call to <code>run_all()</code> in any test or script appends to the SAME list. In a long-running process or repeated test suite, this grows unboundedly and mixes logs from different sessions. Fix: use a per-runner instance log: <code>self._log = []</code> in <code>PluginRunner.__init__</code>, not a class variable.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">3</span>
+      <span class="bug-sev bug-sev-minor">MINOR</span>
+      <span class="bug-line">~52</span>
+      <div class="bug-desc">
+        <strong>__init_subclass__ **kwargs not passed down — intermediate classes break the chain</strong>
+        <p><code>super().__init_subclass__(**kwargs)</code> IS called here — but if any user-defined class between PluginBase and a concrete plugin overrides <code>__init_subclass__</code> without forwarding <code>**kwargs</code>, the cooperative chain breaks silently. Document this requirement clearly.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">4</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~55</span>
+      <div class="bug-desc">
+        <strong>Duplicate plugin name only warns — should raise an error</strong>
+        <p><code>logger.warning("Plugin already registered — overwriting")</code> silently replaces the first plugin with the second. In a production framework, duplicate registration should be a hard error: <code>raise ValueError(f"Plugin {plugin_name!r} already registered")</code>. Silent overwrites cause hard-to-debug "which plugin is actually running?" issues.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">5</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~74</span>
+      <div class="bug-desc">
+        <strong>name() is abstract when _plugin_name class attribute already exists — unnecessary duplication</strong>
+        <p>Every concrete plugin must implement <code>name()</code> to return <code>self._plugin_name</code> — identical boilerplate in every subclass. A concrete property in the base class is cleaner: <code>@property def name(self): return self.__class__._plugin_name</code>. Then <code>@abstractmethod</code> is not needed, and no plugin can forget to implement it.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">6</span>
+      <span class="bug-sev bug-sev-crit">CRITICAL</span>
+      <span class="bug-line">~94</span>
+      <div class="bug-desc">
+        <strong>run_all() catches Exception — swallows AttributeError, NameError, programming bugs</strong>
+        <p><code>except Exception</code> inside <code>run_all()</code> treats plugin coding errors (typos, missing attributes) the same as expected runtime errors. A plugin with a bug in <code>execute()</code> returns <code>None</code> silently — the developer never sees the stack trace. Fix: catch a specific <code>PluginExecutionError</code>, or at minimum log the full traceback: <code>logger.exception("Plugin %s failed", plugin.name())</code>.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">7</span>
+      <span class="bug-sev bug-sev-minor">MINOR</span>
+      <span class="bug-line">~108</span>
+      <div class="bug-desc">
+        <strong>run_one() raises KeyError — wrong exception type for missing plugin</strong>
+        <p><code>raise KeyError(f"No plugin registered as {name!r}")</code> leaks the dict implementation. Callers must catch KeyError which is semantically misleading (it looks like a dict key miss, not a domain miss). Fix: define <code>class PluginNotFoundError(ValueError): pass</code> and raise that.</p>
+      </div>
+    </div>
+    <div class="bug-row">
+      <span class="bug-num">8</span>
+      <span class="bug-sev bug-sev-major">MAJOR</span>
+      <span class="bug-line">~96</span>
+      <div class="bug-desc">
+        <strong>run_all() doesn't handle KeyboardInterrupt — <code>except Exception</code> misses it but system could still hang</strong>
+        <p>If a plugin's <code>execute()</code> raises <code>KeyboardInterrupt</code> (e.g., spawns a subprocess and user presses Ctrl+C), the current <code>except Exception</code> won't catch it — it propagates out of <code>run_all()</code> stopping the entire runner. This is actually the CORRECT behaviour for KeyboardInterrupt, but it should be documented. The bug is that partial results from earlier plugins are lost. Fix: store results as they arrive and re-raise KeyboardInterrupt cleanly after recording state.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="takeaways">
+    <div class="takeaways-label">Key Takeaways from Challenge 03</div>
+    <ul class="takeaways-list">
+      <li>Class-level mutable state (<code class="ic">_execution_log = []</code>) persists for the module's lifetime — use per-instance state for anything that should be scoped</li>
+      <li>Silent overwrites in registries (<code class="ic">_registry[name] = cls</code>) are insidious — duplicate keys should raise, not warn</li>
+      <li>When a class attribute already stores the value, making the getter abstract forces pointless boilerplate — use a concrete property instead</li>
+      <li><code class="ic">except Exception</code> in a plugin runner hides every programming error inside plugins — always use <code class="ic">logger.exception()</code> to log the full traceback</li>
+      <li>Domain methods should raise domain exceptions — not <code class="ic">KeyError</code>, <code class="ic">IndexError</code>, or other built-in structural errors</li>
+      <li><code class="ic">__init_subclass__(**kwargs)</code> must forward <code class="ic">**kwargs</code> up the chain — document this contract for framework users</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script>
+// NAV DATA
+const NAV = [
+  { id:'c1', num:'01', label:'E-Commerce Order System', bugs:8, diff:'hard' },
+  { id:'c2', num:'02', label:'Banking & Accounts',        bugs:7, diff:'hard' },
+  { id:'c3', num:'03', label:'Plugin Framework',          bugs:8, diff:'hard' },
+  { id:'c4', num:'04', label:'Data Pipeline & Files',     bugs:7, diff:'medium' },
+  { id:'c5', num:'05', label:'Game Entity System',        bugs:8, diff:'hard' },
+  { id:'c6', num:'06', label:'REST API Service Layer',    bugs:7, diff:'hard' },
+  { id:'c7', num:'07', label:'Notification System',       bugs:6, diff:'medium' },
+  { id:'c8', num:'08', label:'Config & Validation Engine',bugs:7, diff:'hard' },
+];
+
+// build sidebar
+const nav = document.getElementById('sbNav');
+const scoreTrack = document.getElementById('scoreTrack');
+NAV.forEach(item => {
+  const el = document.createElement('div');
+  el.className = 'sb-item'; el.dataset.id = item.id;
+  el.innerHTML = `<span class="sb-num">${item.num}</span><span style="flex:1">${item.label}</span><span class="sb-bugs">${item.bugs}</span>`;
+  el.onclick = () => scrollTo(item.id);
+  nav.appendChild(el);
+
+  // score dots
+  for(let i=0;i<item.bugs;i++){
+    const d=document.createElement('div');
+    d.className='score-dot'; d.id=`dot_${item.id}_${i}`;
+    scoreTrack.appendChild(d);
+  }
+  const sep=document.createElement('div');
+  sep.style.cssText='width:6px;flex-shrink:0';
+  scoreTrack.appendChild(sep);
+});
+
+function scrollTo(id){
+  const el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.toggle('active',i.dataset.id===id));
+}
+
+// progress bar
+const fill=document.getElementById('progress-fill');
+window.addEventListener('scroll',()=>{
+  const max=document.body.scrollHeight-window.innerHeight;
+  fill.style.width=(max>0?(scrollY/max)*100:0)+'%';
+});
+
+// active nav
+const sections=document.querySelectorAll('.section[id]');
+new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting)
+      document.querySelectorAll('.sb-item').forEach(i=>i.classList.toggle('active',i.dataset.id===e.target.id));
+  });
+},{threshold:0.2}).observe(...sections);
+sections.forEach(s=>{
+  new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) document.querySelectorAll('.sb-item').forEach(i=>i.classList.toggle('active',i.dataset.id===e.target.id)); });
+  },{threshold:0.2}).observe(s);
+});
+
+// reveal answer
+function revealAnswer(answerId, btnId){
+  const ans=document.getElementById(answerId);
+  const btn=document.getElementById(btnId);
+  if(ans.classList.toggle('open')){
+    btn.textContent='Hide Answer'; btn.classList.add('shown');
+    Prism.highlightAllUnder(ans);
+  } else {
+    btn.textContent='Reveal Answer'; btn.classList.remove('shown');
+  }
+}
+
+// hints
+function toggleHints(bodyId, btnId){
+  const body=document.getElementById(bodyId);
+  const btn=document.getElementById(btnId);
+  if(body.classList.toggle('open')){
+    btn.textContent='Hide Hints';
+  } else {
+    btn.textContent='Show Hints';
+  }
+}
+
+// copy
+function copyBlock(id, btn){
+  const el=document.getElementById(id);
+  const text=el ? el.textContent : '';
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied!'; btn.classList.add('ok');
+    setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('ok'); },2000);
+  });
+}
+
+// search
+document.getElementById('sbSearch').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  document.querySelectorAll('.sb-item').forEach(i=>{
+    i.style.display=i.textContent.toLowerCase().includes(q)?'':'none';
+  });
+});
+
+// cat-grid clicks (cover)
+function scrollTo(id){
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.toggle('active',i.dataset.id===id));
+}
+</script>
+</body>
+</html>
