@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Interview Q&A</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #2a2a2a;
+    --accent: #c8ff00;
+    --accent2: #ff6b35;
+    --text: #f0f0f0;
+    --muted: #666;
+    --tag-fundamentals: #1a2a1a;
+    --tag-fundamentals-c: #a3d977;
+    --tag-ml: #1a1a2e;
+    --tag-ml-c: #7eb3ff;
+    --tag-dl: #2a1a2e;
+    --tag-dl-c: #c9a0ff;
+    --tag-ethics: #2e1a1a;
+    --tag-ethics-c: #ff9a9a;
+    --tag-practical: #2a2210;
+    --tag-practical-c: #ffcc66;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 80px 60px 60px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 480px; height: 480px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,255,0,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-label::before {
+    content: '';
+    display: inline-block;
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 13px;
+    max-width: 460px;
+    margin-bottom: 40px;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* FILTERS */
+  .filters-bar {
+    padding: 24px 60px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; margin-right: 8px; text-transform: uppercase; }
+  .filter-btn {
+    padding: 6px 16px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { border-color: var(--accent); background: var(--accent); color: #000; font-weight: 600; }
+
+  /* CONTENT */
+  .content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 48px 60px 80px;
+  }
+
+  .q-count {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .q-item {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
+    overflow: hidden;
+  }
+  .q-item:hover { border-color: #3a3a3a; }
+  .q-item.open { border-color: var(--accent); }
+
+  .q-toggle {
+    width: 100%;
+    background: var(--surface);
+    border: none;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .q-toggle:hover { background: var(--surface2); }
+  .q-item.open .q-toggle { background: var(--surface2); }
+
+  .q-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 28px;
+    letter-spacing: 0.05em;
+  }
+  .q-tag {
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tag-fundamentals { background: var(--tag-fundamentals); color: var(--tag-fundamentals-c); }
+  .tag-ml { background: var(--tag-ml); color: var(--tag-ml-c); }
+  .tag-dl { background: var(--tag-dl); color: var(--tag-dl-c); }
+  .tag-ethics { background: var(--tag-ethics); color: var(--tag-ethics-c); }
+  .tag-practical { background: var(--tag-practical); color: var(--tag-practical-c); }
+
+  .q-text {
+    flex: 1;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--text);
+    font-style: italic;
+  }
+  .q-item.open .q-text { color: var(--accent); font-style: normal; }
+
+  .q-arrow {
+    font-size: 18px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    font-style: normal;
+  }
+  .q-item.open .q-arrow { transform: rotate(45deg); color: var(--accent); }
+
+  .q-answer {
+    display: none;
+    padding: 0 24px 24px 68px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  .q-item.open .q-answer { display: block; }
+  .q-answer-inner {
+    padding-top: 20px;
+    color: #bbb;
+    font-size: 13px;
+    line-height: 1.8;
+    border-left: 2px solid var(--accent);
+    padding-left: 20px;
+  }
+  .q-answer-inner strong {
+    color: var(--text);
+    font-weight: 400;
+  }
+  .q-answer-inner ul {
+    margin: 8px 0 8px 20px;
+    list-style: none;
+  }
+  .q-answer-inner ul li::before {
+    content: '→ ';
+    color: var(--accent);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-text { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; }
+  .footer-accent { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .hero, .filters-bar, .content, footer { padding-left: 24px; padding-right: 24px; }
+    .hero h1 { font-size: 36px; }
+    .hero-stats { gap: 24px; }
+    .q-answer { padding-left: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">Study Guide</div>
+  <h1>AI Interview<br><span>Q&amp;A</span></h1>
+  <p class="hero-sub">Essential questions and answers for machine learning and AI engineering interviews.</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">15</span><span class="stat-label">Questions</span></div>
+    <div class="stat"><span class="stat-num">5</span><span class="stat-label">Categories</span></div>
+    <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Follow-ups</span></div>
+  </div>
+</div>
+
+<div class="filters-bar">
+  <span class="filter-label">Filter</span>
+  <button class="filter-btn active" data-cat="all">All</button>
+  <button class="filter-btn" data-cat="fundamentals">Fundamentals</button>
+  <button class="filter-btn" data-cat="ml">Machine Learning</button>
+  <button class="filter-btn" data-cat="dl">Deep Learning</button>
+  <button class="filter-btn" data-cat="ethics">Ethics</button>
+  <button class="filter-btn" data-cat="practical">Practical</button>
+</div>
+
+<div class="content">
+  <p class="q-count" id="count">15 questions</p>
+  <div id="qlist"></div>
+</div>
+
+<footer>
+  <span class="footer-text">AI Interview Prep — <span class="footer-accent">2026</span></span>
+  <span class="footer-text">Click any question to expand the answer</span>
+</footer>
+
+<script>
+const questions = [
+  { cat: "fundamentals", q: "What is artificial intelligence?", a: "<strong>AI</strong> is the simulation of human intelligence by computer systems — enabling machines to perform tasks like learning, reasoning, problem-solving, and understanding language.<br><br><strong>Key branches:</strong><ul><li>Machine Learning — learning from data</li><li>Natural Language Processing — understanding text/speech</li><li>Computer Vision — interpreting images</li><li>Robotics — physical interaction</li></ul>AI is broadly categorized as <strong>Narrow AI</strong> (task-specific) vs <strong>General AI</strong> (hypothetical human-like reasoning)." },
+  { cat: "fundamentals", q: "What is the difference between AI, ML, and deep learning?", a: "<strong>AI</strong> is the broad goal of making machines intelligent.<br><br><strong>Machine Learning</strong> is a subset — systems that learn patterns from data without being explicitly programmed.<br><br><strong>Deep Learning</strong> is a subset of ML using neural networks with many layers to learn complex representations.<br><br>Think of nested circles: AI ⊃ ML ⊃ Deep Learning. All deep learning is ML, but not all ML is deep learning." },
+  { cat: "fundamentals", q: "What is the difference between supervised and unsupervised learning?", a: "<strong>Supervised learning:</strong> The model trains on labeled data (input → known output). Goal: learn a mapping function. Examples: spam detection, image classification, house price prediction.<br><br><strong>Unsupervised learning:</strong> The model finds patterns in unlabeled data. No ground truth. Examples: clustering customers, topic modeling, anomaly detection.<br><br><strong>Semi-supervised:</strong> A practical middle ground — small labeled set + large unlabeled set." },
+  { cat: "ml", q: "What is overfitting and how do you prevent it?", a: "<strong>Overfitting</strong> is when a model memorizes training data too well and performs poorly on new, unseen data (high variance, low bias).<br><br><strong>Prevention strategies:</strong><ul><li>Regularization (L1/L2) — penalizes large weights</li><li>Dropout — randomly deactivates neurons during training</li><li>Cross-validation — evaluate on held-out folds</li><li>Early stopping — halt training when validation loss increases</li><li>More training data or data augmentation</li><li>Simpler model architecture</li></ul>" },
+  { cat: "ml", q: "Explain the bias–variance tradeoff.", a: "<strong>Bias:</strong> Error from wrong assumptions. High bias → underfitting (model too simple).<br><br><strong>Variance:</strong> Sensitivity to fluctuations in training data. High variance → overfitting (model too complex).<br><br>Total error = Bias² + Variance + Irreducible noise.<br><br>The tradeoff: reducing bias often increases variance and vice versa. The goal is the sweet spot — complex enough to capture patterns, but not so complex it memorizes noise." },
+  { cat: "ml", q: "What evaluation metrics do you use for classification?", a: "<strong>Accuracy</strong> — % of correct predictions (misleading with imbalanced classes).<br><br><strong>Precision</strong> — of predicted positives, how many are truly positive: TP / (TP + FP)<br><br><strong>Recall</strong> — of actual positives, how many were caught: TP / (TP + FN)<br><br><strong>F1 Score</strong> — harmonic mean of precision and recall. Best for imbalanced datasets.<br><br><strong>AUC-ROC</strong> — area under the ROC curve; measures discriminability across thresholds." },
+  { cat: "ml", q: "What is cross-validation?", a: "<strong>Cross-validation</strong> is a technique to evaluate model generalization by splitting data into multiple train/test folds rather than one fixed split.<br><br><strong>K-fold CV:</strong> Split data into k folds. Train on k−1 folds, test on the remaining fold. Repeat k times and average results. Common k values: 5 or 10.<br><br><strong>Benefits:</strong> More reliable performance estimates, uses all data for both training and evaluation, reduces selection bias." },
+  { cat: "dl", q: "How does a neural network learn?", a: "<strong>Forward pass:</strong> Input flows through layers, producing a prediction.<br><br><strong>Loss calculation:</strong> Compare prediction to ground truth using a loss function (e.g. cross-entropy).<br><br><strong>Backpropagation:</strong> Compute gradient of the loss w.r.t. each weight using the chain rule.<br><br><strong>Gradient descent:</strong> Update weights in the direction that reduces loss: w = w − η·∇L<br><br>This cycle repeats for many batches/epochs until the loss converges." },
+  { cat: "dl", q: "What is a transformer and why is it important?", a: "A <strong>transformer</strong> is a neural network architecture introduced in 'Attention is All You Need' (2017). It uses <strong>self-attention</strong>, which allows every token to attend to every other token in parallel — replacing sequential RNNs.<br><br><strong>Why it matters:</strong> Transformers are the backbone of modern LLMs (GPT, BERT, Llama), vision models (ViT), and multimodal AI. Key advantages: parallelizable training, captures long-range dependencies, and scales extremely well with data and compute." },
+  { cat: "dl", q: "What is the vanishing gradient problem?", a: "In deep networks, gradients shrink exponentially as they backpropagate through many layers. Early layers receive near-zero gradients and barely update — the network fails to learn.<br><br><strong>Solutions:</strong><ul><li><strong>ReLU activations</strong> — don't saturate for positive values</li><li><strong>Batch normalization</strong> — normalizes activations across a batch</li><li><strong>Residual connections</strong> (ResNet) — skip connections allow gradients to flow directly</li><li><strong>LSTMs/GRUs</strong> — gating mechanisms in RNNs</li><li><strong>Better initialization</strong> — Xavier, He methods</li></ul>" },
+  { cat: "ethics", q: "What are the main ethical concerns with AI?", a: "<strong>Bias & fairness:</strong> Models trained on biased data perpetuate or amplify discrimination in hiring, lending, and criminal justice.<br><br><strong>Privacy:</strong> AI systems often require large datasets, raising surveillance and consent concerns.<br><br><strong>Transparency:</strong> 'Black box' models make decisions that are hard to explain or audit.<br><br><strong>Job displacement:</strong> Automation may shift the labor market significantly.<br><br><strong>Misuse:</strong> Deepfakes, autonomous weapons, disinformation at scale.<br><br><strong>Alignment:</strong> Ensuring AI systems pursue goals genuinely beneficial to humans." },
+  { cat: "ethics", q: "What is explainability in AI and why does it matter?", a: "<strong>Explainability (XAI)</strong> refers to techniques that make model decisions understandable to humans.<br><br><strong>Why it matters:</strong> High-stakes decisions (medical diagnosis, loan approval, parole) require justification. Users and regulators need to understand why a decision was made. It helps developers identify and fix bias or errors.<br><br><strong>Key methods:</strong><ul><li>LIME — local approximations of model behavior</li><li>SHAP — Shapley values for feature attribution</li><li>Attention visualization — for transformer models</li><li>Saliency maps — for computer vision</li></ul>" },
+  { cat: "practical", q: "Walk me through how you would build an ML model from scratch.", a: "<strong>1. Define the problem</strong> — classification, regression, or generation? What's the success metric?<br><strong>2. Gather & explore data</strong> — EDA, distributions, missing values, class balance.<br><strong>3. Preprocess</strong> — clean, normalize, encode categoricals, handle outliers, feature engineering.<br><strong>4. Split data</strong> — train / validation / test (e.g. 70/15/15).<br><strong>5. Choose & train model</strong> — start simple (baseline), then iterate.<br><strong>6. Evaluate</strong> — metrics aligned with the business goal.<br><strong>7. Tune</strong> — hyperparameter search (grid, random, Bayesian).<br><strong>8. Deploy & monitor</strong> — track drift, retrain as needed." },
+  { cat: "practical", q: "How do you handle imbalanced datasets?", a: "<strong>Resampling:</strong> Oversample the minority class (SMOTE) or undersample the majority.<br><br><strong>Class weights:</strong> Penalize misclassification of the minority class more heavily — most frameworks support this natively.<br><br><strong>Threshold adjustment:</strong> Move the decision threshold from 0.5 to favor recall on the minority class.<br><br><strong>Different metrics:</strong> Use F1, precision-recall curves, or AUC instead of accuracy.<br><br><strong>Anomaly detection framing:</strong> Treat the minority as anomalies — useful for fraud or rare disease detection." },
+  { cat: "practical", q: "What is prompt engineering?", a: "<strong>Prompt engineering</strong> is the practice of crafting inputs to large language models to elicit better, more accurate, or more useful outputs.<br><br><strong>Key techniques:</strong><ul><li><strong>Few-shot prompting</strong> — provide examples in the prompt</li><li><strong>Chain-of-thought</strong> — ask the model to reason step by step</li><li><strong>Role prompting</strong> — assign a persona or expertise</li><li><strong>Structured output</strong> — request JSON or XML formats</li><li><strong>System instructions</strong> — set context and constraints upfront</li></ul>It's increasingly a core skill for building LLM-powered applications." },
+];
+
+const catMap = { fundamentals: "Fundamentals", ml: "Machine Learning", dl: "Deep Learning", ethics: "Ethics", practical: "Practical" };
+let activeFilter = "all";
+
+function render() {
+  const filtered = activeFilter === "all" ? questions : questions.filter(q => q.cat === activeFilter);
+  document.getElementById("count").textContent = filtered.length + " question" + (filtered.length !== 1 ? "s" : "");
+  document.getElementById("qlist").innerHTML = filtered.map((item, i) => `
+    <div class="q-item" onclick="toggleItem(this)">
+      <button class="q-toggle">
+        <span class="q-num">${String(i + 1).padStart(2, "0")}</span>
+        <span class="q-tag tag-${item.cat}">${catMap[item.cat]}</span>
+        <span class="q-text">${item.q}</span>
+        <span class="q-arrow">+</span>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">${item.a}</div></div>
+    </div>
+  `).join("");
+}
+
+function toggleItem(el) {
+  const isOpen = el.classList.contains("open");
+  document.querySelectorAll(".q-item.open").forEach(i => i.classList.remove("open"));
+  if (!isOpen) el.classList.add("open");
+}
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    activeFilter = btn.dataset.cat;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
