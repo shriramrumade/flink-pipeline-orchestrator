@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two-Phase JSON Redaction Example</title>
+<style>
+body{font-family:Arial,sans-serif;line-height:1.6;margin:40px;background:#f4f6f9;color:#222}
+h1,h2,h3{color:#0b5394}
+pre{background:#272822;color:#f8f8f2;padding:12px;border-radius:6px;overflow:auto}
+code{font-family:Consolas,monospace}
+table{border-collapse:collapse;width:100%;margin:15px 0}
+th,td{border:1px solid #ccc;padding:8px;text-align:left}
+th{background:#0b5394;color:white}
+.section{background:#fff;padding:20px;border-radius:8px;margin-bottom:24px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+</style>
+</head>
+<body>
+
+<h1>Two-Phase Sensitive Data Redaction for Nested JSON</h1>
+
+<div class="section">
+<h2>Problem</h2>
+<p>A database table contains a complex nested JSON document stored in a single column. The objective is:</p>
+<ol>
+<li>Identify and classify sensitive data.</li>
+<li>Redact sensitive values using the classification metadata.</li>
+</ol>
+</div>
+
+<div class="section">
+<h2>Input Table</h2>
+<table>
+<tr><th>ID</th><th>Customer</th><th>Payload</th></tr>
+<tr><td>101</td><td>ABC Corp</td><td>Nested JSON</td></tr>
+</table>
+
+<h3>Payload JSON</h3>
+<pre><code>{
+  "customer":{
+    "name":"John Smith",
+    "ssn":"123-45-6789",
+    "email":"john@gmail.com",
+    "phones":[{"type":"mobile","number":"4805551234"}]
+  },
+  "orders":[
+    {"orderId":"1001","payment":{"cardNumber":"4111111111111111","cvv":"123"}},
+    {"orderId":"1002","payment":{"cardNumber":"5555444433332222","cvv":"456"}}
+  ],
+  "comments":"Customer called from Arizona yesterday."
+}</code></pre>
+</div>
+
+<div class="section">
+<h2>Phase 1 - Identify & Classify</h2>
+
+<h3>Flatten JSON</h3>
+<table>
+<tr><th>JSON Path</th><th>Value</th></tr>
+<tr><td>$.customer.name</td><td>John Smith</td></tr>
+<tr><td>$.customer.ssn</td><td>123-45-6789</td></tr>
+<tr><td>$.customer.email</td><td>john@gmail.com</td></tr>
+<tr><td>$.customer.phones[0].number</td><td>4805551234</td></tr>
+<tr><td>$.orders[0].payment.cardNumber</td><td>4111111111111111</td></tr>
+<tr><td>$.orders[0].payment.cvv</td><td>123</td></tr>
+<tr><td>$.orders[1].payment.cardNumber</td><td>5555444433332222</td></tr>
+<tr><td>$.orders[1].payment.cvv</td><td>456</td></tr>
+</table>
+
+<h3>Detection Output</h3>
+<table>
+<tr><th>Path</th><th>Classification</th></tr>
+<tr><td>$.customer.name</td><td>PERSON</td></tr>
+<tr><td>$.customer.ssn</td><td>SSN</td></tr>
+<tr><td>$.customer.email</td><td>EMAIL</td></tr>
+<tr><td>$.customer.phones[0].number</td><td>PHONE</td></tr>
+<tr><td>$.orders[*].payment.cardNumber</td><td>CREDIT_CARD</td></tr>
+<tr><td>$.orders[*].payment.cvv</td><td>CVV</td></tr>
+<tr><td>$.comments</td><td>LOCATION (Arizona)</td></tr>
+</table>
+
+<h3>Metadata Repository</h3>
+<pre><code>[
+ { "path":"$.customer.ssn","entity":"SSN"},
+ { "path":"$.customer.email","entity":"EMAIL"},
+ { "path":"$.orders[0].payment.cardNumber","entity":"CREDIT_CARD"}
+]</code></pre>
+</div>
+
+<div class="section">
+<h2>Phase 2 - Redaction</h2>
+
+<h3>Policy</h3>
+<table>
+<tr><th>Entity</th><th>Replacement</th></tr>
+<tr><td>PERSON</td><td>********</td></tr>
+<tr><td>SSN</td><td>XXX-XX-6789</td></tr>
+<tr><td>EMAIL</td><td>jo****@gmail.com</td></tr>
+<tr><td>PHONE</td><td>******1234</td></tr>
+<tr><td>CREDIT_CARD</td><td>************1111</td></tr>
+<tr><td>CVV</td><td>***</td></tr>
+</table>
+
+<h3>Redacted JSON</h3>
+<pre><code>{
+  "customer":{
+    "name":"********",
+    "ssn":"XXX-XX-6789",
+    "email":"jo****@gmail.com",
+    "phones":[{"type":"mobile","number":"******1234"}]
+  },
+  "orders":[
+    {"orderId":"1001","payment":{"cardNumber":"************1111","cvv":"***"}},
+    {"orderId":"1002","payment":{"cardNumber":"************2222","cvv":"***"}}
+  ],
+  "comments":"Customer called from ******** yesterday."
+}</code></pre>
+</div>
+
+<div class="section">
+<h2>Architecture</h2>
+<pre>
+Database Table
+      |
+      v
+ JSON Parser
+      |
+ Recursive Traversal
+      |
+ JSON Path + Value
+      |
++-------------------------+
+| Regex / Rules           |
+| AI / NER / LLM          |
++-------------------------+
+      |
+ Metadata Repository
+      |
+ Redaction Engine
+      |
+ Redacted JSON
+      |
+ Update Database
+</pre>
+</div>
+
+</body>
+</html>
