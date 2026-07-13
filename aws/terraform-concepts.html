@@ -1,0 +1,2060 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Terraform: Deep Conceptual Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<style>
+:root{--bg:#0d1117;--s1:#161b22;--s2:#1c2330;--bd:#30363d;--bd2:#21262d;
+--tx:#e6edf3;--mu:#8b949e;--dm:#484f58;--ac:#58a6ff;--ac2:#79c0ff;
+--gr:#3fb950;--yl:#d29922;--rd:#f85149;--cn:#39d0c8;--pu:#bc8cff;
+--cbg:#010409;--sw:280px;--mx:840px;
+--f-head:"Space Grotesk",system-ui,sans-serif;
+--f-body:"Inter",system-ui,sans-serif;
+--f-mono:"JetBrains Mono",monospace}
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--f-body);
+font-size:16px;line-height:1.72;-webkit-font-smoothing:antialiased}
+
+/* topbar */
+#bar{position:fixed;top:0;left:0;right:0;height:54px;z-index:50;
+display:flex;align-items:center;gap:12px;padding:0 16px;
+background:rgba(13,17,23,.88);backdrop-filter:blur(14px);
+border-bottom:1px solid var(--bd2)}
+.brand{font-family:var(--f-head);font-weight:700;font-size:15px;letter-spacing:-.02em;
+display:flex;align-items:center;gap:9px}
+.brand .logo{width:28px;height:28px;border-radius:7px;
+background:linear-gradient(135deg,#1e3a5f,#0d2b4a);
+display:flex;align-items:center;justify-content:center;font-size:13px}
+.spacer{flex:1}
+.ibtn{font-family:var(--f-mono);font-size:12px;color:var(--mu);
+background:transparent;border:1px solid var(--bd);border-radius:7px;
+padding:6px 12px;cursor:pointer}
+.ibtn:hover{color:var(--tx);border-color:var(--ac)}
+#mb{display:none}
+#prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:60;
+background:linear-gradient(90deg,var(--ac),var(--cn))}
+
+/* shell */
+.shell{display:grid;grid-template-columns:var(--sw) 1fr;margin-top:54px}
+
+/* sidebar */
+aside{position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;
+border-right:1px solid var(--bd2);padding:12px 8px 80px;background:var(--s1)}
+aside::-webkit-scrollbar{width:4px}
+aside::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
+#ss{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:7px;
+padding:8px 10px;color:var(--tx);font-size:13px;font-family:var(--f-body);
+outline:none;margin-bottom:10px}
+#ss:focus{border-color:var(--ac)}
+#ss::placeholder{color:var(--dm)}
+details.ng{margin-bottom:2px}
+details.ng>summary{list-style:none;cursor:pointer;padding:7px 8px;
+border-radius:7px;display:flex;align-items:center;gap:6px;
+font-family:var(--f-head);font-weight:600;font-size:11px;
+text-transform:uppercase;letter-spacing:.08em;color:var(--mu);user-select:none}
+details.ng>summary:hover{background:var(--s2);color:var(--tx)}
+details.ng>summary::-webkit-details-marker{display:none}
+.ch{color:var(--ac);transition:transform .15s;display:inline-block;font-size:14px}
+details.ng[open]>summary .ch{transform:rotate(90deg)}
+details.ng ul{list-style:none;padding:2px 0 4px 10px;
+border-left:1px solid var(--bd2);margin-left:14px}
+details.ng li{margin:1px 0}
+.nl{display:block;color:var(--mu);text-decoration:none;font-size:12.5px;
+padding:5px 8px;border-radius:6px;border-left:2px solid transparent;margin-left:-9px;line-height:1.35}
+.nl:hover{color:var(--tx);background:var(--s2)}
+.nl.on{color:var(--ac2);border-left-color:var(--ac);background:color-mix(in srgb,var(--ac) 8%,transparent)}
+.nh{display:none!important}
+
+/* content */
+main{min-width:0;padding:0 clamp(18px,4vw,64px)}
+.ct{max-width:var(--mx);margin:0 auto;padding-bottom:120px}
+
+/* hero */
+.hero{padding:52px 0 36px;border-bottom:1px solid var(--bd2);margin-bottom:0}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--ac);margin-bottom:16px;display:flex;align-items:center;gap:9px}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--ac)}
+.hero h1{font-family:var(--f-head);font-weight:700;font-size:clamp(26px,5vw,44px);
+letter-spacing:-.03em;line-height:1.05;margin-bottom:14px}
+.hero h1 .g{background:linear-gradient(120deg,var(--ac),var(--cn));
+-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{color:var(--mu);font-size:16px;max-width:600px;margin-bottom:26px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;
+border-radius:20px;padding:5px 12px;border:1px solid}
+.chip.b{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 40%,transparent);background:color-mix(in srgb,var(--ac) 8%,transparent)}
+.chip.g{color:var(--gr);border-color:color-mix(in srgb,var(--gr) 40%,transparent);background:color-mix(in srgb,var(--gr) 8%,transparent)}
+.chip.p{color:var(--pu);border-color:color-mix(in srgb,var(--pu) 40%,transparent);background:color-mix(in srgb,var(--pu) 8%,transparent)}
+.chip.y{color:var(--yl);border-color:color-mix(in srgb,var(--yl) 40%,transparent);background:color-mix(in srgb,var(--yl) 8%,transparent)}
+
+/* headings */
+.ct h1{font-family:var(--f-head);font-weight:700;
+font-size:clamp(22px,4vw,32px);letter-spacing:-.02em;
+margin:72px 0 8px;padding-top:24px;border-top:1px solid var(--bd);position:relative}
+.ct h1::before{content:"";position:absolute;top:-1px;left:0;width:44px;height:2px;
+background:linear-gradient(90deg,var(--ac),var(--cn))}
+.ct h2{font-family:var(--f-head);font-weight:600;
+font-size:clamp(17px,3vw,22px);letter-spacing:-.015em;
+margin:48px 0 12px;padding-left:13px;border-left:3px solid var(--ac)}
+.ct h3{font-family:var(--f-head);font-weight:600;font-size:17px;
+margin:32px 0 8px;color:var(--tx)}
+.ct h4{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;
+letter-spacing:.1em;color:var(--pu);margin:24px 0 6px}
+.ct p{margin-bottom:14px}
+.ct a{color:var(--ac);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--ac) 30%,transparent)}
+.ct a:hover{border-bottom-color:var(--ac)}
+.ct strong{color:var(--tx);font-weight:600}
+.ct em{color:var(--mu);font-style:italic}
+.ct ul,.ct ol{margin:0 0 16px;padding-left:22px}
+.ct li{margin:5px 0}
+.ct li::marker{color:var(--ac)}
+.ct hr{border:0;border-top:1px solid var(--bd);margin:44px 0}
+.ct blockquote{margin:18px 0;padding:13px 18px;
+border-left:3px solid var(--yl);background:color-mix(in srgb,var(--yl) 6%,var(--s1));
+border-radius:0 9px 9px 0;color:var(--mu)}
+.ct blockquote p:last-child{margin:0}
+
+/* callout boxes from bold-prefixed paragraphs */
+.ct p:has(strong:first-child){background:var(--s2);border:1px solid var(--bd2);
+border-radius:10px;padding:12px 16px;margin:18px 0}
+
+/* inline code */
+.ct :not(pre)>code{font-family:var(--f-mono);font-size:.83em;
+background:var(--s2);color:var(--ac2);padding:.1em .38em;border-radius:5px;
+border:1px solid var(--bd2)}
+
+/* code blocks */
+.cw{margin:20px 0;border:1px solid var(--bd);border-radius:11px;overflow:hidden}
+.ch2{display:flex;align-items:center;gap:8px;padding:8px 14px;
+background:color-mix(in srgb,var(--cbg) 80%,var(--s2));
+border-bottom:1px solid var(--bd2)}
+.dots{display:flex;gap:5px}
+.dots i{width:10px;height:10px;border-radius:50%;display:block}
+.dots i:nth-child(1){background:#f85149}
+.dots i:nth-child(2){background:#d29922}
+.dots i:nth-child(3){background:#3fb950}
+.clang{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;
+letter-spacing:.06em;color:var(--dm);margin-left:4px}
+.ccopy{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--mu);
+background:transparent;border:1px solid var(--bd);border-radius:5px;padding:3px 9px;cursor:pointer}
+.ccopy:hover{color:var(--tx);border-color:var(--ac)}
+.ccopy.ok{color:var(--gr);border-color:var(--gr)}
+.cw pre{margin:0;padding:16px 18px;overflow-x:auto;
+background:var(--cbg);font-family:var(--f-mono);font-size:13px;line-height:1.65;color:#c9d1d9}
+.cw pre::-webkit-scrollbar{height:4px}
+.cw pre::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
+.cw pre code{font-family:inherit;background:none;border:none;padding:0;color:inherit}
+
+/* comment lines in code — greyed out */
+.hljs-comment{color:#6a737d!important}
+
+/* tables */
+.tw{margin:20px 0;overflow-x:auto;border:1px solid var(--bd);border-radius:10px}
+.tw table{border-collapse:collapse;width:100%;font-size:13px;min-width:480px}
+.tw th{font-family:var(--f-mono);font-size:10.5px;text-transform:uppercase;
+letter-spacing:.06em;text-align:left;color:var(--ac);
+background:color-mix(in srgb,var(--s1) 80%,var(--s2));
+padding:10px 14px;border-bottom:1px solid var(--bd);white-space:nowrap}
+.tw td{padding:9px 14px;border-bottom:1px solid var(--bd2);vertical-align:top}
+.tw tr:last-child td{border-bottom:none}
+.tw tr:hover td{background:color-mix(in srgb,var(--s2) 60%,transparent)}
+
+/* checkboxes */
+.cb{display:inline-block;width:14px;height:14px;border:1.5px solid var(--dm);
+border-radius:4px;vertical-align:-2px;margin-right:6px}
+.cb.on{background:var(--gr);border-color:var(--gr);position:relative}
+.cb.on::after{content:"✓";position:absolute;inset:0;color:#0d1117;font-size:10px;
+font-weight:700;display:flex;align-items:center;justify-content:center}
+ul:has(>li>.cb){list-style:none;padding-left:4px}
+li:has(>.cb){padding:2px 0}
+
+/* back to top */
+#top{position:fixed;right:20px;bottom:20px;z-index:40;width:40px;height:40px;
+border-radius:10px;border:1px solid var(--bd);background:var(--s1);
+color:var(--mu);cursor:pointer;font-size:16px;display:none;align-items:center;justify-content:center}
+#top:hover{color:var(--ac);border-color:var(--ac)}
+#top.v{display:flex}
+
+/* mobile */
+.veil{display:none}
+@media(max-width:960px){
+  .shell{grid-template-columns:1fr}
+  #mb{display:inline-flex}
+  aside{position:fixed;top:54px;left:0;width:min(80vw,300px);z-index:45;
+  transform:translateX(-110%);transition:transform .2s}
+  aside.open{transform:none;box-shadow:24px 0 60px rgba(0,0,0,.8)}
+  .veil.v{display:block;position:fixed;inset:54px 0 0;z-index:44;background:rgba(0,0,0,.55)}
+}
+@media(max-width:540px){main{padding:0 16px}.hero{padding:36px 0 28px}}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<div id="bar">
+  <button class="ibtn" id="mb">☰</button>
+  <div class="brand"><span class="logo">⚡</span> Terraform Deep Guide</div>
+  <div class="spacer"></div>
+  <button class="ibtn" id="tb">◐ light</button>
+</div>
+<div class="veil" id="veil"></div>
+<div class="shell">
+<aside id="side">
+  <input id="ss" placeholder="Search…">
+  <nav><details class="ng" open><summary><span class="ch">›</span>CHAPTER 1 — THE MENTAL MODEL (Read This First)</summary><ul>
+<li><a href="#what-terraform-actually-is" class="nl">What Terraform Actually Is</a></li>
+<li><a href="#the-three-worlds-terraform-juggles" class="nl">The Three Worlds Terraform Juggles</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 2 — WHAT HAPPENS WHEN YOU RUN TERRAFORM</summary><ul>
+<li><a href="#step-1-terraform-init" class="nl">Step 1: terraform init</a></li>
+<li><a href="#step-2-terraform-plan" class="nl">Step 2: terraform plan</a></li>
+<li><a href="#step-3-terraform-apply" class="nl">Step 3: terraform apply</a></li>
+<li><a href="#step-4-terraform-destroy" class="nl">Step 4: terraform destroy</a></li>
+<li><a href="#the-refresh" class="nl">The Refresh</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 3 — STATE: THE MOST IMPORTANT THING TO UNDERSTAND</summary><ul>
+<li><a href="#what-state-actually-contains" class="nl">What State Actually Contains</a></li>
+<li><a href="#why-you-never-edit-state-by-hand" class="nl">Why You Never Edit State By Hand</a></li>
+<li><a href="#remote-state-why-and-how" class="nl">Remote State: Why and How</a></li>
+<li><a href="#state-locking-in-detail" class="nl">State Locking in Detail</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 4 — PROVIDERS: THE PLUGINS THAT DO THE WORK</summary><ul>
+<li><a href="#how-providers-work-internally" class="nl">How Providers Work Internally</a></li>
+<li><a href="#provider-authentication" class="nl">Provider Authentication</a></li>
+<li><a href="#provider-version-constraints" class="nl">Provider Version Constraints</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 5 — HCL DEEPLY UNDERSTOOD</summary><ul>
+<li><a href="#resources-vs-data-sources-the-core-distinction" class="nl">Resources vs Data Sources: The Core Distinction</a></li>
+<li><a href="#how-terraform-resolves-references" class="nl">How Terraform Resolves References</a></li>
+<li><a href="#the-lifecycle-meta-argument-what-happens-during-apply" class="nl">The Lifecycle Meta-Argument: What Happens During Apply</a></li>
+<li><a href="#meta-arguments-every-resource-has" class="nl">Meta-Arguments Every Resource Has</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 6 — MODULES: HOW TEAMS SCALE TERRAFORM</summary><ul>
+<li><a href="#what-a-module-is-really" class="nl">What a Module Is (Really)</a></li>
+<li><a href="#how-data-flows-through-modules" class="nl">How Data Flows Through Modules</a></li>
+<li><a href="#module-versions-and-why-they-matter" class="nl">Module Versions and Why They Matter</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 7 — THE COMPLETE TERRAFORM WORKFLOW FOR REAL ORGS</summary><ul>
+<li><a href="#the-standard-git-based-flow" class="nl">The Standard Git-Based Flow</a></li>
+<li><a href="#environment-separation" class="nl">Environment Separation</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 8 — REAL EXAMPLE: Spring Boot Application on GKE</summary><ul>
+<li><a href="#what-were-building" class="nl">What We&#x27;re Building</a></li>
+<li><a href="#step-1-project-and-apis" class="nl">Step 1: Project and APIs</a></li>
+<li><a href="#step-2-vpc-private-cluster-foundation" class="nl">Step 2: VPC (Private Cluster Foundation)</a></li>
+<li><a href="#step-3-gke-cluster" class="nl">Step 3: GKE Cluster</a></li>
+<li><a href="#step-4-workload-identity-the-most-important-security-concept" class="nl">Step 4: Workload Identity — The Most Important Security Concept</a></li>
+<li><a href="#step-5-cloud-sql-private-ip" class="nl">Step 5: Cloud SQL (Private IP)</a></li>
+<li><a href="#step-6-domain-dns-and-https-load-balancer" class="nl">Step 6: Domain, DNS, and HTTPS Load Balancer</a></li>
+<li><a href="#step-7-cloud-armor-waf" class="nl">Step 7: Cloud Armor WAF</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 9 — REAL EXAMPLE: Python Application on AWS EKS</summary><ul>
+<li><a href="#what-were-building_1" class="nl">What We&#x27;re Building</a></li>
+<li><a href="#networking-publicprivate-subnets" class="nl">Networking (Public/Private Subnets)</a></li>
+<li><a href="#eks-cluster" class="nl">EKS Cluster</a></li>
+<li><a href="#irsa-aws-identity-for-pods-same-concept-as-workload-identity" class="nl">IRSA: AWS Identity for Pods (same concept as Workload Identity)</a></li>
+<li><a href="#rds-database" class="nl">RDS Database</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 10 — WHAT EXACTLY HAPPENS WHEN TERRAFORM TOUCHES A KUBERNETES CLUSTER</summary><ul>
+<li><a href="#the-challenge" class="nl">The Challenge</a></li>
+<li><a href="#terraforms-kubernetes-provider-appropriate-vs-inappropriate-uses" class="nl">Terraform&#x27;s kubernetes Provider: Appropriate vs Inappropriate Uses</a></li>
+<li><a href="#the-right-split" class="nl">The Right Split</a></li>
+<li><a href="#what-helm_release-actually-does" class="nl">What helm_release Actually Does</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 11 — COMMON REAL-WORLD PATTERNS</summary><ul>
+<li><a href="#pattern-1-secrets-that-the-app-needs-at-runtime" class="nl">Pattern 1: Secrets That the App Needs at Runtime</a></li>
+<li><a href="#pattern-2-multiple-aws-regions-gcp-regions" class="nl">Pattern 2: Multiple AWS Regions / GCP Regions</a></li>
+<li><a href="#pattern-3-conditional-resources-feature-flags-in-hcl" class="nl">Pattern 3: Conditional Resources (Feature Flags in HCL)</a></li>
+<li><a href="#pattern-4-terraform_remote_state-cross-stack-references" class="nl">Pattern 4: terraform_remote_state (Cross-Stack References)</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 12 — TERRAFORM IMPORT: BRINGING EXISTING RESOURCES UNDER MANAGEMENT</summary><ul>
+<li><a href="#the-scenario" class="nl">The Scenario</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 13 — DEBUGGING TERRAFORM</summary><ul>
+<li><a href="#reading-error-messages" class="nl">Reading Error Messages</a></li>
+<li><a href="#useful-debug-flags" class="nl">Useful Debug Flags</a></li>
+</ul></details>
+<details class="ng" open><summary><span class="ch">›</span>CHAPTER 14 — THE COMPLETE CHECKLIST</summary><ul>
+<li><a href="#before-you-write-any-hcl" class="nl">Before You Write Any HCL</a></li>
+<li><a href="#before-every-apply" class="nl">Before Every apply</a></li>
+<li><a href="#before-merging-terraform-code" class="nl">Before Merging Terraform Code</a></li>
+<li><a href="#the-destroy-discipline-for-sandboxes" class="nl">The Destroy Discipline (For Sandboxes)</a></li>
+</ul></details></nav>
+</aside>
+<main>
+<div class="ct">
+<div class="hero">
+  <div class="eyebrow">Conceptual deep-dive · AWS &amp; GCP</div>
+  <h1>Terraform: <span class="g">How it Actually Works</span></h1>
+  <p class="sub">The mental model, lifecycle, providers, state, and real setups — Spring Boot, Python, domain, WAF, Workload Identity.</p>
+  <div class="chips">
+    <span class="chip b">14 Chapters</span>
+    <span class="chip g">GCP &amp; AWS</span>
+    <span class="chip p">Spring Boot + Python</span>
+    <span class="chip y">Workload Identity</span>
+  </div>
+</div>
+
+<hr />
+<h1 id="chapter-1-the-mental-model-read-this-first">CHAPTER 1 — THE MENTAL MODEL (Read This First)</h1>
+<h2 id="what-terraform-actually-is">What Terraform Actually Is</h2>
+<p>Most people learn Terraform by copying commands. This guide teaches you to <em>understand</em> it — so when something breaks at 2am, you know exactly why.</p>
+<p>Terraform is a <strong>desired-state engine</strong>. You describe what you <em>want</em> to exist. Terraform figures out <em>how</em> to make it exist, and in what order. You never write steps like "first create the VPC, then create the subnet" — you just declare both, and Terraform builds the dependency graph automatically.</p>
+<p>This is the single most important idea. Everything else flows from it.</p>
+<pre><code>You write:  WHAT you want
+Terraform:  figures out HOW and in WHAT ORDER
+Cloud APIs: actually create the resources
+</code></pre>
+<p>Compare this to how you'd do it manually:</p>
+<pre><code>Manual:  aws ec2 create-vpc → get VPC id → aws ec2 create-subnet --vpc-id &lt;that id&gt; → ...
+         (you track state, you handle order, you handle failures)
+
+Terraform: write vpc + subnet declarations → terraform apply
+           (Terraform tracks state, handles order, handles idempotency)
+</code></pre>
+<h2 id="the-three-worlds-terraform-juggles">The Three Worlds Terraform Juggles</h2>
+<p>At all times, Terraform is aware of three separate realities:</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────┐
+│ WORLD 1: Your .tf files                                             │
+│   What you DECLARED you want to exist right now                     │
+│   Lives in: your git repo                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│ WORLD 2: terraform.tfstate                                          │
+│   What Terraform LAST CREATED/KNEW ABOUT                           │
+│   Lives in: S3 bucket / GCS bucket (production) or local file      │
+├─────────────────────────────────────────────────────────────────────┤
+│ WORLD 3: The actual cloud (AWS/GCP APIs)                            │
+│   What ACTUALLY EXISTS RIGHT NOW                                    │
+│   Lives in: the cloud provider                                      │
+└─────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<p><strong><code>terraform plan</code></strong> = diff(World 1, World 3) using World 2 as a cache
+<strong><code>terraform apply</code></strong> = make World 3 match World 1, then update World 2</p>
+<p>This is why:
+- Deleting something from your .tf files makes Terraform <em>destroy</em> it (World 1 no longer contains it)
+- Manually changing something in the cloud causes drift (World 2 ≠ World 3)
+- The state file is precious — it's Terraform's memory of what it created</p>
+<hr />
+<h1 id="chapter-2-what-happens-when-you-run-terraform">CHAPTER 2 — WHAT HAPPENS WHEN YOU RUN TERRAFORM</h1>
+<h2 id="step-1-terraform-init">Step 1: <code>terraform init</code></h2>
+<pre><code class="language-bash">terraform init
+</code></pre>
+<p>What actually happens, in order:</p>
+<pre><code>1. Terraform reads your .tf files looking for:
+   - terraform { required_providers { ... } }
+   - terraform { backend { ... } }
+
+2. Downloads provider plugins into .terraform/providers/
+   Each provider is a separate binary (e.g., terraform-provider-aws)
+   These plugins translate your HCL into API calls
+
+3. Initialises the backend
+   - If S3/GCS: connects and verifies bucket exists
+   - Downloads existing state from remote backend
+
+4. Creates .terraform.lock.hcl
+   Records exact provider versions + hashes (like package-lock.json)
+</code></pre>
+<p><strong>The provider is a translator.</strong> When you write:</p>
+<pre><code class="language-hcl">resource &quot;aws_s3_bucket&quot; &quot;my_bucket&quot; {
+  bucket = &quot;my-unique-name&quot;
+}
+</code></pre>
+<p>The <code>aws</code> provider plugin translates this into:</p>
+<pre><code>POST https://s3.amazonaws.com/
+Body: CreateBucket(Bucket=my-unique-name, ...)
+</code></pre>
+<p>You never write API calls. The provider handles every API detail.</p>
+<h2 id="step-2-terraform-plan">Step 2: <code>terraform plan</code></h2>
+<pre><code class="language-bash">terraform plan
+</code></pre>
+<p>What actually happens:</p>
+<pre><code>1. Load all .tf files → build the resource graph in memory
+
+2. Read current state from state file (World 2)
+
+3. For each resource in your config:
+   - Call provider's READ operation (refresh from real cloud = World 3)
+   - Compare: desired (World 1) vs actual (World 3)
+
+4. Build a list of changes:
+   + create   = in World 1, NOT in World 2/3
+   - destroy  = NOT in World 1, IS in World 2/3
+   ~ update   = in both, but attributes differ (in-place change possible)
+  -/+ replace = in both, but a changed attribute forces destroy+recreate
+
+5. Topologically sort the changes (parents before children)
+
+6. Print the plan — but change NOTHING
+</code></pre>
+<p><strong>The plan is a contract.</strong> Reading it carefully is not optional — it's your only chance to catch mistakes before they happen. Specifically watch for <code>-/+</code> (replace) on databases and stateful resources.</p>
+<h2 id="step-3-terraform-apply">Step 3: <code>terraform apply</code></h2>
+<pre><code class="language-bash">terraform apply
+</code></pre>
+<p>What actually happens:</p>
+<pre><code>1. Acquire state lock (prevents concurrent applies from corrupting state)
+   - S3: writes a .tflock file
+   - GCS: uses object generation conditions
+
+2. Show the plan again and ask for confirmation (unless -auto-approve)
+
+3. Execute the plan in dependency order:
+   For each resource:
+     a. Call provider's CREATE/UPDATE/DELETE API
+     b. Wait for the operation to complete (some take minutes)
+     c. Provider calls READ again to get the final resource attributes
+        (like the auto-assigned public IP, the generated ARN, etc.)
+     d. Write those attributes to state immediately
+        (even if the next resource fails, this one is recorded)
+
+4. Release state lock
+
+5. Write updated state file
+</code></pre>
+<p><strong>Why attributes are written immediately (step 3d):</strong> if apply fails halfway through, Terraform knows what was created and what wasn't. On the next apply, it only creates the missing pieces.</p>
+<h2 id="step-4-terraform-destroy">Step 4: <code>terraform destroy</code></h2>
+<pre><code class="language-bash">terraform destroy
+</code></pre>
+<p>Same as apply, but the "desired state" is empty. Every resource in state gets destroyed, in reverse dependency order (children before parents). You can't destroy a VPC while subnets still exist — Terraform handles the order.</p>
+<h2 id="the-refresh">The Refresh</h2>
+<p>When you run <code>plan</code> or <code>apply</code>, Terraform calls each provider's READ for every resource in state. This is called a <em>refresh</em>. It's how Terraform detects:
+- Resources deleted manually in the console (they disappear from World 3)
+- Attributes changed manually (drift)
+- Resources that still exist (no change needed)</p>
+<p>You can skip the refresh with <code>-refresh=false</code> for speed, but then Terraform is working from stale data.</p>
+<hr />
+<h1 id="chapter-3-state-the-most-important-thing-to-understand">CHAPTER 3 — STATE: THE MOST IMPORTANT THING TO UNDERSTAND</h1>
+<h2 id="what-state-actually-contains">What State Actually Contains</h2>
+<p>Open a <code>terraform.tfstate</code> file and you'll see JSON like this:</p>
+<pre><code class="language-json">{
+  &quot;version&quot;: 4,
+  &quot;terraform_version&quot;: &quot;1.6.0&quot;,
+  &quot;resources&quot;: [
+    {
+      &quot;type&quot;: &quot;aws_s3_bucket&quot;,
+      &quot;name&quot;: &quot;my_bucket&quot;,
+      &quot;provider&quot;: &quot;provider[\&quot;registry.terraform.io/hashicorp/aws\&quot;]&quot;,
+      &quot;instances&quot;: [
+        {
+          &quot;schema_version&quot;: 0,
+          &quot;attributes&quot;: {
+            &quot;id&quot;: &quot;my-unique-name&quot;,
+            &quot;arn&quot;: &quot;arn:aws:s3:::my-unique-name&quot;,
+            &quot;bucket&quot;: &quot;my-unique-name&quot;,
+            &quot;region&quot;: &quot;us-east-1&quot;,
+            &quot;tags&quot;: { &quot;Environment&quot;: &quot;dev&quot; }
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>State stores <strong>every attribute of every resource Terraform created</strong>. This includes:
+- The resource's unique ID (how Terraform finds it on refresh)
+- Auto-generated values (ARNs, IPs, generated passwords)
+- All configuration values</p>
+<p><strong>This is why state contains secrets.</strong> If you create a database with a password, that password is in the state file in plaintext. Always encrypt your remote state.</p>
+<h2 id="why-you-never-edit-state-by-hand">Why You Never Edit State By Hand</h2>
+<p>The state file has a <code>serial</code> number. If you edit it by hand and get the JSON wrong, or the serial doesn't match, Terraform can't read it. Use <code>terraform state</code> commands instead:</p>
+<pre><code class="language-bash">terraform state list                    # list all resources in state
+terraform state show aws_s3_bucket.x   # show one resource's state
+terraform state mv old.name new.name   # rename without destroying
+terraform state rm aws_s3_bucket.x     # remove from state (doesn't destroy the real resource)
+terraform import aws_s3_bucket.x name  # bring an existing resource INTO state
+</code></pre>
+<h2 id="remote-state-why-and-how">Remote State: Why and How</h2>
+<p>Local state (<code>terraform.tfstate</code> on your laptop) is fine for solo experiments. In teams:</p>
+<pre><code>Problem 1: Two people run apply simultaneously → state corruption
+Problem 2: Your laptop dies → state is gone → Terraform doesn't know what exists
+Problem 3: State contains secrets → shouldn't be in git
+Problem 4: Nobody else can run Terraform → blocked on one machine
+</code></pre>
+<p>Remote state solves all four:</p>
+<pre><code class="language-hcl"># AWS: state in S3 with native locking
+terraform {
+  backend &quot;s3&quot; {
+    bucket       = &quot;my-terraform-state&quot;
+    key          = &quot;prod/webapp/terraform.tfstate&quot;   # path within bucket
+    region       = &quot;us-east-1&quot;
+    encrypt      = true                               # AES-256 or KMS
+    use_lockfile = true                               # prevents concurrent applies
+  }
+}
+
+# GCP: state in GCS (locking is automatic)
+terraform {
+  backend &quot;gcs&quot; {
+    bucket = &quot;my-terraform-state&quot;
+    prefix = &quot;prod/webapp&quot;
+  }
+}
+</code></pre>
+<p><strong>The key is like a folder path.</strong> Different projects use different keys so their state doesn't collide. A common pattern:</p>
+<pre><code>team/environment/component/terraform.tfstate
+platform/prod/networking/terraform.tfstate
+platform/prod/database/terraform.tfstate
+payments/dev/app/terraform.tfstate
+</code></pre>
+<p>Separate state = separate blast radius. A broken apply in <code>payments/dev</code> can't affect <code>platform/prod</code>.</p>
+<h2 id="state-locking-in-detail">State Locking in Detail</h2>
+<p>When you run <code>apply</code>:
+1. Terraform writes a lock record to the backend (S3: a <code>.tflock</code> file; GCS: a lock object)
+2. The lock contains: who locked it, when, what operation
+3. If another <code>apply</code> tries to start: it reads the lock and fails with:
+   <code>Error: Error acquiring the state lock
+   Lock Info: ID=abc123, Operation=apply, Who=alice@machine, Created=...</code>
+4. When apply finishes (success or failure): lock is released</p>
+<p>If Terraform crashes mid-apply, the lock stays. Use <code>terraform force-unlock &lt;lock-id&gt;</code> — but only when you're 100% sure no apply is running.</p>
+<hr />
+<h1 id="chapter-4-providers-the-plugins-that-do-the-work">CHAPTER 4 — PROVIDERS: THE PLUGINS THAT DO THE WORK</h1>
+<h2 id="how-providers-work-internally">How Providers Work Internally</h2>
+<p>A provider is a Go binary that implements a protocol. It has four operations per resource type:</p>
+<pre><code>CREATE  → call the cloud API to create the resource, return all attributes
+READ    → call the cloud API to check if the resource still exists + get current state
+UPDATE  → call the cloud API to change attributes that can be changed in-place
+DELETE  → call the cloud API to destroy the resource
+</code></pre>
+<p>When you write:</p>
+<pre><code class="language-hcl">resource &quot;google_compute_instance&quot; &quot;web&quot; {
+  name         = &quot;my-vm&quot;
+  machine_type = &quot;e2-micro&quot;
+  ...
+}
+</code></pre>
+<p>Terraform calls the <code>google</code> provider binary, which calls:</p>
+<pre><code>POST https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances
+Authorization: Bearer &lt;your gcloud credentials&gt;
+Body: { name: &quot;my-vm&quot;, machineType: &quot;zones/.../machineTypes/e2-micro&quot;, ... }
+</code></pre>
+<p><strong>You are just writing a nice language on top of REST API calls.</strong></p>
+<h2 id="provider-authentication">Provider Authentication</h2>
+<p>Providers need credentials to call APIs. They find them in this order:</p>
+<p><strong>AWS provider:</strong></p>
+<pre><code>1. environment variables: AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY
+2. ~/.aws/credentials file (what `aws configure` creates)
+3. IAM instance role (if running ON an EC2 instance)
+4. ECS task role / Lambda execution role
+5. Web Identity Token (OIDC — for CI/CD, the modern way)
+</code></pre>
+<p><strong>Google provider:</strong></p>
+<pre><code>1. GOOGLE_CREDENTIALS env var (path to a service account JSON key)
+2. Application Default Credentials (ADC)
+   - gcloud auth application-default login sets this up
+   - Workload Identity sets this up automatically on GKE
+3. Metadata server (if running ON a GCE instance or GKE pod)
+</code></pre>
+<p><strong>The important lesson:</strong> In CI/CD, never store credentials as secrets in CI. Use OIDC/Workload Identity so CI gets temporary credentials by proving its identity. More on this in the setup chapters.</p>
+<h2 id="provider-version-constraints">Provider Version Constraints</h2>
+<pre><code class="language-hcl">terraform {
+  required_providers {
+    aws = {
+      source  = &quot;hashicorp/aws&quot;
+      version = &quot;~&gt; 5.0&quot;      # &gt;= 5.0.0, &lt; 6.0.0
+    }
+    google = {
+      source  = &quot;hashicorp/google&quot;
+      version = &quot;&gt;= 5.0, &lt; 6.0&quot;
+    }
+  }
+}
+</code></pre>
+<p>Version constraint operators:</p>
+<pre><code>= 5.1.0    exactly 5.1.0
+!= 5.1.0   anything except 5.1.0
+&gt;= 5.0     5.0 or higher
+~&gt; 5.0     &gt;= 5.0, &lt; 6.0 (the patch/minor are free, major is locked)
+~&gt; 5.1     &gt;= 5.1, &lt; 6.0 (same)
+</code></pre>
+<p><strong>Always pin to <code>~&gt; MAJOR.MINOR</code> in production.</strong> Provider major versions often contain breaking changes. Unpinned = your infra might change behaviour after a teammate's <code>init</code>.</p>
+<hr />
+<h1 id="chapter-5-hcl-deeply-understood">CHAPTER 5 — HCL DEEPLY UNDERSTOOD</h1>
+<h2 id="resources-vs-data-sources-the-core-distinction">Resources vs Data Sources: The Core Distinction</h2>
+<pre><code class="language-hcl"># RESOURCE: Terraform CREATES and MANAGES this
+resource &quot;aws_vpc&quot; &quot;main&quot; {
+  cidr_block = &quot;10.0.0.0/16&quot;
+}
+# Terraform calls: CREATE vpc, UPDATE vpc, DELETE vpc
+
+# DATA SOURCE: Terraform READS this but does NOT manage it
+data &quot;aws_ami&quot; &quot;amazon_linux&quot; {
+  most_recent = true
+  owners      = [&quot;amazon&quot;]
+  filter {
+    name   = &quot;name&quot;
+    values = [&quot;al2023-ami-*-x86_64&quot;]
+  }
+}
+# Terraform calls: READ only. Never creates or destroys.
+</code></pre>
+<p>Data sources are how you reference things Terraform didn't create:
+- The latest AMI id (changes every few weeks as Amazon patches)
+- An existing VPC you're not managing in this config
+- Your AWS account id
+- Available availability zones</p>
+<h2 id="how-terraform-resolves-references">How Terraform Resolves References</h2>
+<pre><code class="language-hcl">resource &quot;aws_vpc&quot; &quot;main&quot; {
+  cidr_block = &quot;10.0.0.0/16&quot;
+}
+
+resource &quot;aws_subnet&quot; &quot;web&quot; {
+  vpc_id     = aws_vpc.main.id        # reference to the vpc's id attribute
+  cidr_block = &quot;10.0.1.0/24&quot;
+}
+</code></pre>
+<p>When Terraform sees <code>aws_vpc.main.id</code>, it knows:
+1. <code>aws_subnet.web</code> depends on <code>aws_vpc.main</code>
+2. Create the VPC first, get its <code>id</code> from the API response
+3. Use that <code>id</code> when creating the subnet</p>
+<p>You never need to write the VPC id anywhere. You reference it by the Terraform address of the resource. Terraform figures out the ordering from the reference graph.</p>
+<p><strong>The dependency graph in action:</strong></p>
+<pre><code>aws_vpc.main
+    └── aws_subnet.web
+            └── aws_instance.app
+                    └── aws_eip.app
+</code></pre>
+<p>Apply: vpc → subnet → instance → eip
+Destroy: eip → instance → subnet → vpc (reverse)</p>
+<h2 id="the-lifecycle-meta-argument-what-happens-during-apply">The Lifecycle Meta-Argument: What Happens During Apply</h2>
+<p>Every resource has a hidden <code>lifecycle</code> block with defaults you can override:</p>
+<pre><code class="language-hcl">resource &quot;aws_db_instance&quot; &quot;main&quot; {
+  # ...
+  lifecycle {
+    # 1. create_before_destroy (default: false)
+    # If a replacement is needed (a new DB), create the new one FIRST,
+    # then destroy the old one. Reduces downtime on replacements.
+    create_before_destroy = true
+
+    # 2. prevent_destroy (default: false)
+    # terraform destroy or a plan that would destroy this resource
+    # returns an error. Your safety net for production databases.
+    prevent_destroy = true
+
+    # 3. ignore_changes (default: [])
+    # Terraform won't treat external changes to these attributes as drift.
+    # Use when something outside Terraform manages these (e.g., autoscaler)
+    ignore_changes = [
+      allocated_storage,   # RDS can autoscale storage; we don't want to fight it
+      tags[&quot;LastModified&quot;] # some tools auto-update this tag
+    ]
+
+    # 4. replace_triggered_by (default: [])
+    # Force replacement of THIS resource when another changes.
+    # E.g., replace the launch template when the AMI changes.
+    replace_triggered_by = [aws_ami.app]
+  }
+}
+</code></pre>
+<p><strong>When does a resource get REPLACED (not updated)?</strong></p>
+<p>Some attributes are immutable — the cloud API doesn't let you change them on an existing resource. If you change one, Terraform must destroy the old resource and create a new one. Examples:
+- S3 bucket name (changing it = new bucket)
+- RDS engine version (major) = new instance
+- AZ of a subnet = new subnet
+- EC2 instance type (some require replacement, some don't)</p>
+<p>The plan shows this as <code>-/+</code>. Always look for it.</p>
+<h2 id="meta-arguments-every-resource-has">Meta-Arguments Every Resource Has</h2>
+<pre><code class="language-hcl">resource &quot;aws_instance&quot; &quot;app&quot; {
+  # ...
+
+  # count: create N copies; indexed as aws_instance.app[0], [1], etc.
+  count = 3
+
+  # for_each: create one per map entry or set member
+  for_each = toset([&quot;us-east-1a&quot;, &quot;us-east-1b&quot;])
+  availability_zone = each.value  # or each.key for maps
+
+  # depends_on: explicit dependency (rarely needed — use references instead)
+  depends_on = [aws_iam_role_policy_attachment.app]
+
+  # provider: use a specific provider alias (for multi-region)
+  provider = aws.us-west-2
+
+  lifecycle { ... }
+}
+</code></pre>
+<p><strong>count vs for_each — the crucial difference:</strong></p>
+<pre><code class="language-hcl"># count uses POSITION as the key
+resource &quot;aws_iam_user&quot; &quot;dev&quot; {
+  count = 3
+  name  = &quot;dev-${count.index}&quot;
+}
+# Users: dev-0, dev-1, dev-2
+# Addresses: aws_iam_user.dev[0], [1], [2]
+# If you REMOVE dev-1: dev-2 becomes [1], gets DESTROYED AND RECREATED
+
+# for_each uses NAME as the key
+resource &quot;aws_iam_user&quot; &quot;dev&quot; {
+  for_each = toset([&quot;alice&quot;, &quot;bob&quot;, &quot;carol&quot;])
+  name     = each.key
+}
+# Users: alice, bob, carol
+# Addresses: aws_iam_user.dev[&quot;alice&quot;], [&quot;bob&quot;], [&quot;carol&quot;]
+# If you REMOVE bob: only bob is destroyed; alice and carol untouched
+</code></pre>
+<p><strong>Rule:</strong> Use <code>for_each</code> for any collection where members might be added or removed. Use <code>count</code> only as a 0/1 toggle (conditional resource).</p>
+<hr />
+<h1 id="chapter-6-modules-how-teams-scale-terraform">CHAPTER 6 — MODULES: HOW TEAMS SCALE TERRAFORM</h1>
+<h2 id="what-a-module-is-really">What a Module Is (Really)</h2>
+<p>Every directory of <code>.tf</code> files is a module. When you run <code>terraform apply</code> in a directory, you're running the <em>root module</em>. You call other directories as <em>child modules</em>:</p>
+<pre><code class="language-hcl">module &quot;vpc&quot; {
+  source = &quot;./modules/vpc&quot;       # local path
+  # OR
+  source = &quot;git::https://github.com/org/tf-modules.git//vpc?ref=v1.2.0&quot;
+  # OR
+  source = &quot;terraform-aws-modules/vpc/aws&quot;  # Terraform Registry
+  version = &quot;~&gt; 5.0&quot;
+
+  # inputs = the module's variables
+  cidr     = &quot;10.0.0.0/16&quot;
+  azs      = [&quot;us-east-1a&quot;, &quot;us-east-1b&quot;]
+}
+
+# outputs from child modules are accessed as:
+resource &quot;aws_instance&quot; &quot;app&quot; {
+  subnet_id = module.vpc.private_subnet_ids[0]
+  #           ^^^^^^^^                      ^^^
+  #           module name                   output name
+}
+</code></pre>
+<h2 id="how-data-flows-through-modules">How Data Flows Through Modules</h2>
+<pre><code>Root module
+├── variables.tf    ← inputs FROM the caller (terraform.tfvars or -var flags)
+├── main.tf         ← resources + calls to child modules
+├── outputs.tf      ← outputs TO the caller (if this is itself a child)
+│
+└── modules/
+    └── vpc/
+        ├── variables.tf    ← what the root module passes in
+        ├── main.tf         ← the actual VPC/subnet resources
+        └── outputs.tf      ← vpc_id, subnet_ids etc. for the root to use
+</code></pre>
+<p><strong>Data only flows through explicit interfaces.</strong> A child module cannot reach into its parent's state. A parent cannot see inside a child except through outputs. This is the encapsulation that makes modules composable.</p>
+<h2 id="module-versions-and-why-they-matter">Module Versions and Why They Matter</h2>
+<pre><code class="language-hcl">module &quot;eks&quot; {
+  source  = &quot;terraform-aws-modules/eks/aws&quot;
+  version = &quot;~&gt; 20.0&quot;   # This is pinned
+}
+</code></pre>
+<p>Without version pinning, <code>terraform init</code> downloads the latest version every time. If the module's author makes a breaking change, your next <code>plan</code> might want to destroy and recreate your production cluster.</p>
+<p>When consuming a published module version, always:
+1. Read its CHANGELOG before bumping versions
+2. Test the new version in dev/staging first
+3. Bump prod separately with a manual review</p>
+<hr />
+<h1 id="chapter-7-the-complete-terraform-workflow-for-real-orgs">CHAPTER 7 — THE COMPLETE TERRAFORM WORKFLOW FOR REAL ORGS</h1>
+<h2 id="the-standard-git-based-flow">The Standard Git-Based Flow</h2>
+<pre><code>Developer changes .tf files
+         │
+         ▼
+   git commit + push
+         │
+         ▼
+   CI pipeline (on PR):
+   ┌────────────────────┐
+   │ terraform fmt -check│ ← fails if formatting wrong
+   │ terraform validate  │ ← checks syntax + internal consistency
+   │ tflint              │ ← provider-specific lint (bad instance types, deprecated args)
+   │ tfsec / trivy       │ ← security issues (open SGs, unencrypted disks)
+   │ terraform plan      │ ← the actual planned changes
+   │ post plan to PR     │ ← reviewer reads the plan
+   └────────────────────┘
+         │
+         ▼
+   Human reviews the PLAN (not just the code)
+         │
+         ▼
+   Merge to main
+         │
+         ▼
+   CI pipeline (on merge):
+   terraform apply ← with manual approval gate for prod
+</code></pre>
+<p><strong>The plan comment on the PR is the key review artifact.</strong> Reviewing the HCL is good. Reviewing the plan is essential. The plan is the contract of what will actually change.</p>
+<h2 id="environment-separation">Environment Separation</h2>
+<pre><code>terraform/
+├── modules/          ← shared modules (no state here)
+│   ├── vpc/
+│   ├── eks/
+│   └── database/
+└── environments/
+    ├── dev/
+    │   ├── backend.tf      ← key: &quot;dev/terraform.tfstate&quot;
+    │   ├── main.tf         ← calls modules with dev settings
+    │   └── terraform.tfvars
+    ├── staging/
+    │   ├── backend.tf      ← key: &quot;staging/terraform.tfstate&quot;  ← DIFFERENT STATE
+    │   └── ...
+    └── prod/
+        ├── backend.tf      ← key: &quot;prod/terraform.tfstate&quot;    ← DIFFERENT STATE
+        └── ...
+</code></pre>
+<p><strong>Separate state files per environment</strong> is the critical property. If your dev <code>apply</code> corrupts state, it cannot affect prod state. They are independent files in separate paths in the same bucket, or even separate buckets.</p>
+<hr />
+<h1 id="chapter-8-real-example-spring-boot-application-on-gke">CHAPTER 8 — REAL EXAMPLE: Spring Boot Application on GKE</h1>
+<p>Let's build this completely. A Spring Boot app, containerised, running on GKE, with a Cloud SQL database, domain name, Cloud Armor WAF, and Workload Identity (no service account keys anywhere).</p>
+<h2 id="what-were-building">What We're Building</h2>
+<pre><code>Internet
+   │
+   ▼
+Cloud Armor WAF (security layer)
+   │
+   ▼
+Global HTTPS Load Balancer (your domain: app.company.com)
+   │
+   ▼
+GKE Cluster (private nodes)
+   │ Workload Identity (no keys)
+   ▼
+Cloud SQL (PostgreSQL, private IP)
+</code></pre>
+<h2 id="step-1-project-and-apis">Step 1: Project and APIs</h2>
+<pre><code class="language-hcl"># terraform/gcp/project/main.tf
+# Enable all the APIs we need (GCP requires explicit enablement)
+locals {
+  project = &quot;my-company-prod&quot;
+  region  = &quot;us-central1&quot;
+}
+
+resource &quot;google_project_service&quot; &quot;apis&quot; {
+  for_each = toset([
+    &quot;container.googleapis.com&quot;,         # GKE
+    &quot;sqladmin.googleapis.com&quot;,          # Cloud SQL
+    &quot;servicenetworking.googleapis.com&quot;, # private service access (SQL private IP)
+    &quot;secretmanager.googleapis.com&quot;,     # secrets
+    &quot;cloudarmor.googleapis.com&quot;,        # Cloud Armor WAF
+    &quot;dns.googleapis.com&quot;,               # Cloud DNS
+    &quot;compute.googleapis.com&quot;,           # VPC, load balancer
+    &quot;iam.googleapis.com&quot;,               # IAM + Workload Identity
+  ])
+  project = local.project
+  service = each.value
+  disable_on_destroy = false  # don't disable API when you destroy this resource
+}
+</code></pre>
+<p>Why <code>disable_on_destroy = false</code>? If you accidentally destroy this resource, you don't want all your APIs turned off. This is a safe default.</p>
+<h2 id="step-2-vpc-private-cluster-foundation">Step 2: VPC (Private Cluster Foundation)</h2>
+<pre><code class="language-hcl"># terraform/gcp/networking/main.tf
+
+resource &quot;google_compute_network&quot; &quot;main&quot; {
+  name                    = &quot;main-vpc&quot;
+  auto_create_subnetworks = false  # we create subnets explicitly
+  project                 = local.project
+}
+
+resource &quot;google_compute_subnetwork&quot; &quot;gke&quot; {
+  name          = &quot;gke-subnet&quot;
+  ip_cidr_range = &quot;10.10.0.0/20&quot;    # 4096 IPs for nodes
+  region        = local.region
+  network       = google_compute_network.main.id
+  project       = local.project
+
+  # GKE needs secondary ranges for Pods and Services
+  # (pods get IPs from a separate range, not the node range)
+  secondary_ip_range {
+    range_name    = &quot;pods&quot;
+    ip_cidr_range = &quot;10.20.0.0/16&quot;   # 65536 pod IPs
+  }
+  secondary_ip_range {
+    range_name    = &quot;services&quot;
+    ip_cidr_range = &quot;10.30.0.0/20&quot;   # 4096 service IPs
+  }
+
+  private_ip_google_access = true  # nodes can reach Google APIs without external IPs
+}
+
+# Cloud NAT: lets private nodes reach the internet (for pulling images, apt-get etc.)
+# WITHOUT having public IPs themselves
+resource &quot;google_compute_router&quot; &quot;main&quot; {
+  name    = &quot;main-router&quot;
+  region  = local.region
+  network = google_compute_network.main.id
+  project = local.project
+}
+
+resource &quot;google_compute_router_nat&quot; &quot;main&quot; {
+  name                               = &quot;main-nat&quot;
+  router                             = google_compute_router.main.name
+  region                             = local.region
+  project                            = local.project
+  nat_ip_allocate_option             = &quot;AUTO_ONLY&quot;      # GCP manages the NAT IPs
+  source_subnetwork_ip_ranges_to_nat = &quot;ALL_SUBNETWORKS_ALL_IP_RANGES&quot;
+}
+
+# Private Service Access: lets Cloud SQL get a private IP in OUR VPC
+# This sets up a VPC peering between our VPC and Google's services VPC
+resource &quot;google_compute_global_address&quot; &quot;psa_range&quot; {
+  name          = &quot;psa-range&quot;
+  purpose       = &quot;VPC_PEERING&quot;
+  address_type  = &quot;INTERNAL&quot;
+  prefix_length = 20              # /20 = 4096 IPs reserved for Google services
+  network       = google_compute_network.main.id
+  project       = local.project
+}
+
+resource &quot;google_service_networking_connection&quot; &quot;psa&quot; {
+  network                 = google_compute_network.main.id
+  service                 = &quot;servicenetworking.googleapis.com&quot;
+  reserved_peering_ranges = [google_compute_global_address.psa_range.name]
+}
+</code></pre>
+<p><strong>What Private Service Access (PSA) does:</strong> Creates a VPC peering between your VPC and Google's internal services VPC. After this, when Cloud SQL is created with <code>private_network</code>, it gets an IP from <code>psa_range</code> — in your VPC's address space. Your GKE pods connect to <code>10.x.x.x</code> directly, traffic never leaves Google's network.</p>
+<h2 id="step-3-gke-cluster">Step 3: GKE Cluster</h2>
+<pre><code class="language-hcl"># terraform/gcp/gke/main.tf
+
+resource &quot;google_container_cluster&quot; &quot;main&quot; {
+  name     = &quot;main-cluster&quot;
+  location = local.region      # regional cluster = control plane in 3 zones
+  project  = local.project
+
+  # We manage node pools separately for flexibility
+  remove_default_node_pool = true
+  initial_node_count       = 1   # required but ignored when remove_default_node_pool=true
+
+  network    = google_compute_network.main.name
+  subnetwork = google_compute_subnetwork.gke.name
+
+  # Private cluster: nodes have no public IPs
+  # Control plane accessible from specific CIDRs only
+  private_cluster_config {
+    enable_private_nodes    = true   # nodes: no public IPs, use Cloud NAT for egress
+    enable_private_endpoint = false  # control plane: still publicly accessible
+    master_ipv4_cidr_block  = &quot;172.16.0.0/28&quot;  # control plane's internal IP range
+  }
+
+  # Use the secondary ranges we defined in the subnet
+  ip_allocation_policy {
+    cluster_secondary_range_name  = &quot;pods&quot;
+    services_secondary_range_name = &quot;services&quot;
+  }
+
+  # Workload Identity: lets pods assume Google service accounts WITHOUT key files
+  workload_identity_config {
+    workload_pool = &quot;${local.project}.svc.id.goog&quot;
+  }
+
+  # Restrict which IPs can reach the Kubernetes API (the control plane)
+  master_authorized_networks_config {
+    cidr_blocks {
+      cidr_block   = &quot;10.10.0.0/20&quot;  # nodes can reach API
+      display_name = &quot;GKE nodes&quot;
+    }
+    # Add your office IP or VPN here for kubectl access
+    cidr_blocks {
+      cidr_block   = &quot;1.2.3.4/32&quot;
+      display_name = &quot;Office&quot;
+    }
+  }
+
+  addons_config {
+    http_load_balancing { disabled = false }   # needed for GKE-managed Ingress
+    network_policy_config { disabled = false } # enables NetworkPolicy support
+  }
+}
+
+# Node pool: where your actual workloads run
+resource &quot;google_container_node_pool&quot; &quot;main&quot; {
+  name       = &quot;main-pool&quot;
+  location   = local.region
+  cluster    = google_container_cluster.main.name
+  project    = local.project
+
+  node_count = 2   # per zone, so regional = 2 * 3 zones = 6 nodes total
+
+  autoscaling {
+    min_node_count = 1   # per zone
+    max_node_count = 5   # per zone
+  }
+
+  management {
+    auto_repair  = true   # GCP replaces unhealthy nodes automatically
+    auto_upgrade = true   # GCP upgrades node k8s version automatically
+  }
+
+  node_config {
+    machine_type = &quot;e2-standard-4&quot;   # 4 vCPU, 16 GB RAM
+    disk_size_gb = 100
+    disk_type    = &quot;pd-ssd&quot;
+
+    # This service account is what the NODE (kubelet) uses.
+    # It's different from what the POD uses (that's Workload Identity below)
+    service_account = google_service_account.gke_nodes.email
+    oauth_scopes    = [&quot;https://www.googleapis.com/auth/cloud-platform&quot;]
+
+    # Enable Workload Identity on nodes
+    workload_metadata_config {
+      mode = &quot;GKE_METADATA&quot;
+    }
+
+    labels = {
+      environment = &quot;prod&quot;
+      managed-by  = &quot;terraform&quot;
+    }
+  }
+}
+
+# The node's service account — minimal permissions
+resource &quot;google_service_account&quot; &quot;gke_nodes&quot; {
+  account_id   = &quot;gke-nodes&quot;
+  display_name = &quot;GKE Node SA&quot;
+  project      = local.project
+}
+
+resource &quot;google_project_iam_member&quot; &quot;node_permissions&quot; {
+  for_each = toset([
+    &quot;roles/logging.logWriter&quot;,         # write logs to Cloud Logging
+    &quot;roles/monitoring.metricWriter&quot;,   # write metrics
+    &quot;roles/monitoring.viewer&quot;,         # read monitoring data
+    &quot;roles/artifactregistry.reader&quot;,   # pull container images
+  ])
+  project = local.project
+  role    = each.value
+  member  = &quot;serviceAccount:${google_service_account.gke_nodes.email}&quot;
+}
+</code></pre>
+<p><strong>Why remove the default node pool?</strong> The default node pool has fixed settings. By removing it and creating our own, we control machine type, autoscaling, and Workload Identity config.</p>
+<p><strong>Why separate node SA from pod SA?</strong> Security. The node SA needs broad permissions (write logs, pull images). A pod SA should only have permissions for what <em>that specific application</em> needs. Workload Identity lets you give each pod its own identity with granular permissions, without any key files.</p>
+<h2 id="step-4-workload-identity-the-most-important-security-concept">Step 4: Workload Identity — The Most Important Security Concept</h2>
+<p>Workload Identity lets a Kubernetes pod act as a Google Cloud service account WITHOUT any service account key files. This is the secure way to give pods access to GCP APIs.</p>
+<pre><code>Traditional (BAD):
+  Pod → reads /var/secrets/key.json (mounted secret) → calls GCP API
+  Problem: the key file can be stolen, expires, needs rotation
+
+Workload Identity (GOOD):
+  Pod → calls metadata server → GCP verifies &quot;this pod has k8s SA 'myapp'&quot;
+      → GCP checks IAM binding: &quot;k8s SA 'myapp' = GCP SA 'myapp-gcp'&quot;
+      → returns short-lived token for 'myapp-gcp' → calls GCP API
+  No key files. Token is auto-rotated every hour.
+</code></pre>
+<pre><code class="language-hcl"># terraform/gcp/workload_identity/main.tf
+
+# Step 1: Create a GCP service account for the Spring Boot app
+resource &quot;google_service_account&quot; &quot;springboot_app&quot; {
+  account_id   = &quot;springboot-app&quot;
+  display_name = &quot;Spring Boot Application&quot;
+  project      = local.project
+}
+
+# Step 2: Give it the permissions the app needs
+resource &quot;google_project_iam_member&quot; &quot;springboot_cloudsql&quot; {
+  project = local.project
+  role    = &quot;roles/cloudsql.client&quot;   # can connect to Cloud SQL
+  member  = &quot;serviceAccount:${google_service_account.springboot_app.email}&quot;
+}
+
+resource &quot;google_project_iam_member&quot; &quot;springboot_secrets&quot; {
+  project = local.project
+  role    = &quot;roles/secretmanager.secretAccessor&quot;  # can read secrets
+  member  = &quot;serviceAccount:${google_service_account.springboot_app.email}&quot;
+}
+
+# Step 3: The binding — allow the KUBERNETES service account to impersonate the GCP SA
+resource &quot;google_service_account_iam_member&quot; &quot;workload_identity_binding&quot; {
+  service_account_id = google_service_account.springboot_app.name
+  role               = &quot;roles/iam.workloadIdentityUser&quot;
+
+  # Format: &quot;serviceAccount:{project}.svc.id.goog[{namespace}/{k8s-sa-name}]&quot;
+  member = &quot;serviceAccount:${local.project}.svc.id.goog[default/springboot-app]&quot;
+  #                                                        ^^^^^^^^^  ^^^^^^^^^^^^^^
+  #                                                        namespace  k8s SA name (created in Kubernetes)
+}
+
+# Output the GCP SA email — needed for the Kubernetes SA annotation
+output &quot;gcp_sa_email&quot; {
+  value = google_service_account.springboot_app.email
+}
+</code></pre>
+<p>Now in Kubernetes (your GitOps repo, managed by Argo CD):</p>
+<pre><code class="language-yaml"># The Kubernetes service account needs ONE annotation pointing to the GCP SA
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: springboot-app
+  namespace: default
+  annotations:
+    # This annotation is what completes the binding
+    iam.gke.io/gcp-service-account: springboot-app@my-company-prod.iam.gserviceaccount.com
+</code></pre>
+<p>When a pod uses this service account, GKE's metadata server intercepts calls to the metadata endpoint and returns a token for the GCP SA. <strong>No key file. No secret. No rotation needed.</strong></p>
+<h2 id="step-5-cloud-sql-private-ip">Step 5: Cloud SQL (Private IP)</h2>
+<pre><code class="language-hcl"># terraform/gcp/database/main.tf
+
+resource &quot;google_sql_database_instance&quot; &quot;main&quot; {
+  name             = &quot;springboot-db&quot;
+  database_version = &quot;POSTGRES_15&quot;
+  region           = local.region
+  project          = local.project
+
+  settings {
+    tier = &quot;db-custom-2-7680&quot;  # 2 vCPU, 7.5 GB RAM
+
+    availability_type = &quot;REGIONAL&quot;  # synchronous replication to standby in another zone
+                                    # &quot;ZONAL&quot; is cheaper but single-AZ
+
+    disk_autoresize = true          # storage grows automatically
+    disk_size       = 50            # GB starting size
+
+    backup_configuration {
+      enabled                        = true
+      start_time                     = &quot;03:00&quot;  # 3am UTC
+      point_in_time_recovery_enabled = true     # restore to any point in last 7 days
+      transaction_log_retention_days = 7
+      backup_retention_settings {
+        retained_backups = 30
+      }
+    }
+
+    ip_configuration {
+      ipv4_enabled    = false           # NO public IP
+      private_network = google_compute_network.main.id
+      # requires google_service_networking_connection.psa to exist first
+    }
+
+    database_flags {
+      name  = &quot;max_connections&quot;
+      value = &quot;200&quot;
+    }
+  }
+
+  deletion_protection = true  # GCP-level protection: can't delete from console or API
+  lifecycle {
+    prevent_destroy = true    # Terraform-level protection: can't destroy from tf
+  }
+
+  depends_on = [google_service_networking_connection.psa]
+}
+
+resource &quot;google_sql_database&quot; &quot;app&quot; {
+  name     = &quot;springboot&quot;
+  instance = google_sql_database_instance.main.name
+  project  = local.project
+}
+
+# The app connects as this user
+resource &quot;google_sql_user&quot; &quot;app&quot; {
+  name     = &quot;springboot_app&quot;
+  instance = google_sql_database_instance.main.name
+  project  = local.project
+  # Password managed by Cloud SQL Auth Proxy + Workload Identity — no password needed!
+  # The Cloud SQL Auth Proxy handles IAM authentication.
+  # Set type = &quot;CLOUD_IAM_SERVICE_ACCOUNT&quot; for keyless auth
+  type     = &quot;CLOUD_IAM_SERVICE_ACCOUNT&quot;
+  # For IAM auth: the username is the service account email WITHOUT the .gserviceaccount.com
+  name     = trimsuffix(google_service_account.springboot_app.email, &quot;.gserviceaccount.com&quot;)
+}
+</code></pre>
+<p><strong>How the Spring Boot app connects to Cloud SQL without a password:</strong></p>
+<pre><code>Pod (running Cloud SQL Auth Proxy as a sidecar)
+  → Auth Proxy uses Workload Identity to get a GCP token
+  → Auth Proxy opens an encrypted connection to Cloud SQL using that token
+  → Spring Boot app connects to localhost:5432 (the proxy's local port)
+  → Spring Boot never needs a password or a key
+</code></pre>
+<p>This is the secure pattern. No passwords in environment variables. No key files.</p>
+<h2 id="step-6-domain-dns-and-https-load-balancer">Step 6: Domain, DNS, and HTTPS Load Balancer</h2>
+<pre><code class="language-hcl"># terraform/gcp/dns_lb/main.tf
+
+# Cloud DNS zone for our domain
+resource &quot;google_dns_managed_zone&quot; &quot;main&quot; {
+  name        = &quot;company-zone&quot;
+  dns_name    = &quot;company.com.&quot;   # note the trailing dot
+  description = &quot;Main company zone&quot;
+  project     = local.project
+  visibility  = &quot;public&quot;
+}
+
+# Reserve a static global IP for our HTTPS load balancer
+resource &quot;google_compute_global_address&quot; &quot;app&quot; {
+  name    = &quot;app-lb-ip&quot;
+  project = local.project
+}
+
+# A record: app.company.com → our global IP
+resource &quot;google_dns_record_set&quot; &quot;app&quot; {
+  name         = &quot;app.${google_dns_managed_zone.main.dns_name}&quot;  # app.company.com.
+  type         = &quot;A&quot;
+  ttl          = 300
+  managed_zone = google_dns_managed_zone.main.name
+  project      = local.project
+  rrdatas      = [google_compute_global_address.app.address]
+}
+
+# Google-managed SSL certificate (auto-provisioned, auto-renewed)
+resource &quot;google_compute_managed_ssl_certificate&quot; &quot;app&quot; {
+  name    = &quot;app-cert&quot;
+  project = local.project
+  managed {
+    domains = [&quot;app.company.com&quot;]
+    # Google contacts Let's Encrypt, verifies DNS (the record above), issues cert
+    # Renewal is automatic before expiry
+  }
+}
+
+# The load balancer is multiple resources in GCP:
+# 1. Backend service (points to the GKE NodePort or NEG)
+# 2. URL map (routes requests)
+# 3. Target HTTPS proxy (terminates TLS)
+# 4. Forwarding rule (the actual listener on the global IP)
+
+# For GKE, we typically use a GKE Ingress which manages these automatically.
+# But here's the explicit Terraform version for understanding:
+
+resource &quot;google_compute_backend_service&quot; &quot;app&quot; {
+  name                  = &quot;app-backend&quot;
+  project               = local.project
+  protocol              = &quot;HTTP&quot;
+  load_balancing_scheme = &quot;EXTERNAL_MANAGED&quot;
+
+  # The backend is a Network Endpoint Group (NEG) auto-created by GKE
+  # when you add the &quot;cloud.google.com/neg&quot; annotation to your Service
+  # GKE creates the NEG; we reference it here
+  backend {
+    group           = data.google_compute_network_endpoint_group.app.id
+    balancing_mode  = &quot;RATE&quot;
+    max_rate_per_endpoint = 100
+  }
+
+  health_checks = [google_compute_health_check.app.id]
+  security_policy = google_compute_security_policy.waf.id  # Cloud Armor
+}
+
+resource &quot;google_compute_health_check&quot; &quot;app&quot; {
+  name    = &quot;app-health&quot;
+  project = local.project
+  http_health_check {
+    port         = 8080
+    request_path = &quot;/actuator/health&quot;  # Spring Boot actuator health endpoint
+  }
+}
+
+resource &quot;google_compute_url_map&quot; &quot;app&quot; {
+  name            = &quot;app-urlmap&quot;
+  project         = local.project
+  default_service = google_compute_backend_service.app.id
+}
+
+resource &quot;google_compute_target_https_proxy&quot; &quot;app&quot; {
+  name             = &quot;app-https-proxy&quot;
+  project          = local.project
+  url_map          = google_compute_url_map.app.id
+  ssl_certificates = [google_compute_managed_ssl_certificate.app.id]
+}
+
+resource &quot;google_compute_global_forwarding_rule&quot; &quot;app&quot; {
+  name                  = &quot;app-frontend&quot;
+  project               = local.project
+  target                = google_compute_target_https_proxy.app.id
+  port_range            = &quot;443&quot;
+  ip_address            = google_compute_global_address.app.address
+  load_balancing_scheme = &quot;EXTERNAL_MANAGED&quot;
+}
+
+# HTTP → HTTPS redirect
+resource &quot;google_compute_url_map&quot; &quot;redirect&quot; {
+  name    = &quot;redirect-to-https&quot;
+  project = local.project
+  default_url_redirect {
+    https_redirect         = true
+    redirect_response_code = &quot;MOVED_PERMANENTLY_DEFAULT&quot;
+    strip_query            = false
+  }
+}
+</code></pre>
+<p><strong>What "global" means in GCP:</strong> a global forwarding rule, global IP, and global load balancer mean your traffic enters Google's network at the nearest PoP (point of presence) to the user — in Frankfurt for a German user, in Singapore for a Singapore user. It only travels on Google's fast internal backbone to your GKE cluster in us-central1. This is faster than a regional LB where the TCP handshake has to travel the full distance.</p>
+<h2 id="step-7-cloud-armor-waf">Step 7: Cloud Armor WAF</h2>
+<pre><code class="language-hcl">resource &quot;google_compute_security_policy&quot; &quot;waf&quot; {
+  name    = &quot;app-waf&quot;
+  project = local.project
+
+  # Rule 1: Block known malicious IPs (Google's threat intelligence)
+  rule {
+    action   = &quot;deny(403)&quot;
+    priority = 1000
+    match {
+      expr {
+        expression = &quot;evaluateThreatIntelligence('iplist-known-malicious-ips')&quot;
+      }
+    }
+    description = &quot;Block known malicious IPs&quot;
+  }
+
+  # Rule 2: SQL injection protection (OWASP CRS)
+  rule {
+    action   = &quot;deny(403)&quot;
+    priority = 2000
+    match {
+      expr {
+        expression = &quot;evaluatePreconfiguredExpr('sqli-v33-stable')&quot;
+      }
+    }
+    description = &quot;SQL injection protection&quot;
+  }
+
+  # Rule 3: XSS protection
+  rule {
+    action   = &quot;deny(403)&quot;
+    priority = 2001
+    match {
+      expr {
+        expression = &quot;evaluatePreconfiguredExpr('xss-v33-stable')&quot;
+      }
+    }
+    description = &quot;XSS protection&quot;
+  }
+
+  # Rule 4: Rate limiting — 100 requests per minute per IP
+  rule {
+    action   = &quot;throttle&quot;
+    priority = 3000
+    match {
+      versioned_expr = &quot;SRC_IPS_V1&quot;
+      config { src_ip_ranges = [&quot;*&quot;] }
+    }
+    rate_limit_options {
+      conform_action = &quot;allow&quot;
+      exceed_action  = &quot;deny(429)&quot;
+      enforce_on_key = &quot;IP&quot;
+      rate_limit_threshold {
+        count        = 100
+        interval_sec = 60
+      }
+    }
+    description = &quot;Rate limit 100 req/min per IP&quot;
+  }
+
+  # Default: allow everything else
+  rule {
+    action   = &quot;allow&quot;
+    priority = 2147483647  # max int32 = the default rule
+    match {
+      versioned_expr = &quot;SRC_IPS_V1&quot;
+      config { src_ip_ranges = [&quot;*&quot;] }
+    }
+    description = &quot;Default allow&quot;
+  }
+}
+</code></pre>
+<hr />
+<h1 id="chapter-9-real-example-python-application-on-aws-eks">CHAPTER 9 — REAL EXAMPLE: Python Application on AWS EKS</h1>
+<h2 id="what-were-building_1">What We're Building</h2>
+<pre><code>Internet
+   │
+   ▼
+AWS WAF (rules)
+   │
+   ▼
+ALB (Application Load Balancer)
+   │ HTTPS, certificate from ACM
+   ▼
+EKS Cluster (private nodes in private subnets)
+   │ IRSA (IAM Roles for Service Accounts — AWS equivalent of Workload Identity)
+   ▼
+RDS PostgreSQL (in private subnet, no public access)
+   │
+   ▼
+Secrets Manager (DB password, API keys)
+</code></pre>
+<h2 id="networking-publicprivate-subnets">Networking (Public/Private Subnets)</h2>
+<pre><code class="language-hcl"># terraform/aws/networking/main.tf
+# Using the terraform-aws-modules/vpc module for a complete, well-tested setup
+
+module &quot;vpc&quot; {
+  source  = &quot;terraform-aws-modules/vpc/aws&quot;
+  version = &quot;~&gt; 5.0&quot;
+
+  name = &quot;prod-vpc&quot;
+  cidr = &quot;10.0.0.0/16&quot;
+
+  # 3 AZs for high availability
+  azs             = [&quot;us-east-1a&quot;, &quot;us-east-1b&quot;, &quot;us-east-1c&quot;]
+
+  # Public subnets: ALB, NAT Gateways sit here
+  public_subnets  = [&quot;10.0.1.0/24&quot;, &quot;10.0.2.0/24&quot;, &quot;10.0.3.0/24&quot;]
+
+  # Private subnets: EKS nodes, RDS — no public IPs
+  private_subnets = [&quot;10.0.11.0/24&quot;, &quot;10.0.12.0/24&quot;, &quot;10.0.13.0/24&quot;]
+
+  # Database subnets: even more restricted (no route to internet)
+  database_subnets = [&quot;10.0.21.0/24&quot;, &quot;10.0.22.0/24&quot;, &quot;10.0.23.0/24&quot;]
+
+  enable_nat_gateway     = true
+  single_nat_gateway     = false   # prod: one NAT per AZ (resilient but pricier)
+  one_nat_gateway_per_az = true
+
+  # These tags are REQUIRED for EKS to find subnets for ALBs and NLBs
+  public_subnet_tags = {
+    &quot;kubernetes.io/role/elb&quot; = &quot;1&quot;   # external (internet-facing) ALBs
+  }
+  private_subnet_tags = {
+    &quot;kubernetes.io/role/internal-elb&quot; = &quot;1&quot;  # internal ALBs
+  }
+
+  tags = {
+    Environment = &quot;prod&quot;
+    ManagedBy   = &quot;terraform&quot;
+  }
+}
+</code></pre>
+<p><strong>Why database subnets are separate:</strong> Database subnets have no route table entry to the internet or NAT. Even if an attacker got into a node in the private subnet, they'd need an additional hop to reach the DB layer. Defense in depth.</p>
+<h2 id="eks-cluster">EKS Cluster</h2>
+<pre><code class="language-hcl"># terraform/aws/eks/main.tf
+module &quot;eks&quot; {
+  source  = &quot;terraform-aws-modules/eks/aws&quot;
+  version = &quot;~&gt; 20.0&quot;
+
+  cluster_name    = &quot;prod-cluster&quot;
+  cluster_version = &quot;1.30&quot;
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets   # nodes in private subnets
+
+  # Allow kubectl from the VPN/office
+  cluster_endpoint_public_access       = true
+  cluster_endpoint_public_access_cidrs = [&quot;10.0.0.0/8&quot;, &quot;YOUR_OFFICE_IP/32&quot;]
+
+  # Enable IRSA: creates an OIDC identity provider for the cluster
+  enable_irsa = true
+
+  eks_managed_node_groups = {
+    # System nodes: for cluster-critical pods (CoreDNS, kube-proxy, etc.)
+    system = {
+      instance_types = [&quot;m5.large&quot;]
+      min_size       = 2
+      max_size       = 4
+      desired_size   = 2
+      labels         = { role = &quot;system&quot; }
+      taints = [{
+        key    = &quot;CriticalAddonsOnly&quot;
+        value  = &quot;true&quot;
+        effect = &quot;NO_SCHEDULE&quot;
+      }]
+    }
+
+    # App nodes: where your Python apps run
+    app = {
+      instance_types = [&quot;m5.xlarge&quot;, &quot;m5a.xlarge&quot;, &quot;m5n.xlarge&quot;]  # multiple types = better spot availability
+      capacity_type  = &quot;SPOT&quot;      # 70% cheaper; apps must handle interruption gracefully
+      min_size       = 2
+      max_size       = 20
+      desired_size   = 3
+      labels         = { role = &quot;app&quot; }
+    }
+  }
+
+  # Cluster add-ons managed by EKS (auto-updated with the cluster)
+  cluster_addons = {
+    coredns    = { most_recent = true }
+    kube-proxy = { most_recent = true }
+    vpc-cni    = { most_recent = true }   # AWS VPC CNI: pods get VPC IPs directly
+    aws-ebs-csi-driver = { most_recent = true }  # for PersistentVolumes
+  }
+
+  tags = { Environment = &quot;prod&quot; }
+}
+</code></pre>
+<p><strong>Spot instances:</strong> much cheaper, but AWS can reclaim them with 2-minute notice. Your apps need to handle <code>SIGTERM</code> gracefully (finish in-flight requests, flush state). Well-designed 12-factor apps handle this naturally. The <code>min_size = 2</code> on-demand safety net ensures you always have capacity.</p>
+<h2 id="irsa-aws-identity-for-pods-same-concept-as-workload-identity">IRSA: AWS Identity for Pods (same concept as Workload Identity)</h2>
+<pre><code class="language-hcl"># terraform/aws/irsa/main.tf
+
+# Step 1: Create the IAM role that pods will assume
+module &quot;python_app_irsa&quot; {
+  source  = &quot;terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks&quot;
+  version = &quot;~&gt; 5.0&quot;
+
+  role_name = &quot;python-app&quot;
+
+  # Trust policy: which k8s service accounts can assume this role
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = [&quot;production:python-app&quot;]
+      #                             ^^^^^^^^^  ^^^^^^^^^^
+      #                             namespace  k8s SA name
+    }
+  }
+
+  # Step 2: Attach policies defining what the app can DO
+  role_policy_arns = {
+    secrets_access = aws_iam_policy.python_app_secrets.arn
+    s3_access      = aws_iam_policy.python_app_s3.arn
+  }
+}
+
+resource &quot;aws_iam_policy&quot; &quot;python_app_secrets&quot; {
+  name = &quot;python-app-secrets&quot;
+  policy = jsonencode({
+    Version = &quot;2012-10-17&quot;
+    Statement = [{
+      Effect   = &quot;Allow&quot;
+      Action   = [&quot;secretsmanager:GetSecretValue&quot;]
+      Resource = [
+        aws_secretsmanager_secret.db_password.arn,
+        aws_secretsmanager_secret.api_keys.arn,
+      ]
+      # Note: specific ARNs, NOT &quot;arn:aws:secretsmanager:*:*:secret:*&quot;
+      # Least privilege: only these exact secrets
+    }]
+  })
+}
+
+resource &quot;aws_iam_policy&quot; &quot;python_app_s3&quot; {
+  name = &quot;python-app-s3&quot;
+  policy = jsonencode({
+    Version = &quot;2012-10-17&quot;
+    Statement = [{
+      Effect = &quot;Allow&quot;
+      Action = [&quot;s3:GetObject&quot;, &quot;s3:PutObject&quot;]
+      Resource = &quot;${aws_s3_bucket.app_data.arn}/*&quot;
+    }]
+  })
+}
+
+# The OIDC mechanism explained:
+# 1. EKS creates an OIDC provider (a URL like https://oidc.eks.us-east-1.amazonaws.com/id/...)
+# 2. When a pod starts, the kubelet mounts a JWT token signed by that OIDC provider
+# 3. The pod's AWS SDK sees this token and calls STS AssumeRoleWithWebIdentity
+# 4. STS verifies the token with the OIDC provider
+# 5. STS checks the role's trust policy: &quot;does namespace:service-account match?&quot;
+# 6. If yes, returns temporary AWS credentials (valid 1 hour, auto-renewed)
+# 7. Pod uses those credentials for all AWS API calls
+# Result: no access keys, no secrets to rotate, no IAM users
+</code></pre>
+<p>In Kubernetes (GitOps repo):</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: python-app
+  namespace: production
+  annotations:
+    # This annotation is what triggers IRSA
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/python-app
+</code></pre>
+<h2 id="rds-database">RDS Database</h2>
+<pre><code class="language-hcl"># terraform/aws/rds/main.tf
+
+resource &quot;aws_db_subnet_group&quot; &quot;main&quot; {
+  name       = &quot;prod-db&quot;
+  subnet_ids = module.vpc.database_subnets   # the most restricted subnets
+}
+
+resource &quot;random_password&quot; &quot;db_password&quot; {
+  length  = 32
+  special = false  # some old JDBC connectors break on special chars
+}
+
+resource &quot;aws_secretsmanager_secret&quot; &quot;db_password&quot; {
+  name                    = &quot;prod/rds/password&quot;
+  recovery_window_in_days = 7   # can restore a deleted secret for 7 days
+}
+
+resource &quot;aws_secretsmanager_secret_version&quot; &quot;db_password&quot; {
+  secret_id = aws_secretsmanager_secret.db_password.id
+  secret_string = jsonencode({
+    username = &quot;python_app&quot;
+    password = random_password.db_password.result
+    host     = aws_db_instance.main.address
+    port     = 5432
+    dbname   = &quot;appdb&quot;
+  })
+}
+
+resource &quot;aws_db_instance&quot; &quot;main&quot; {
+  identifier = &quot;prod-app-db&quot;
+
+  engine         = &quot;postgres&quot;
+  engine_version = &quot;15.4&quot;
+  instance_class = &quot;db.t3.medium&quot;
+
+  allocated_storage     = 100
+  max_allocated_storage = 500   # storage autoscales up to 500GB
+  storage_type          = &quot;gp3&quot;
+  storage_encrypted     = true
+  kms_key_id           = aws_kms_key.rds.arn  # customer-managed key
+
+  db_name  = &quot;appdb&quot;
+  username = &quot;python_app&quot;
+  password = random_password.db_password.result
+
+  # Network: put in database subnets, no public access
+  db_subnet_group_name   = aws_db_subnet_group.main.name
+  vpc_security_group_ids = [aws_security_group.rds.id]
+  publicly_accessible    = false   # NEVER true in production
+
+  # High availability: synchronous replication to a standby in another AZ
+  multi_az = true
+
+  # Backups
+  backup_retention_period   = 30     # 30 days of daily backups
+  backup_window             = &quot;03:00-04:00&quot;
+  maintenance_window        = &quot;sun:04:00-sun:05:00&quot;
+  delete_automated_backups  = false  # keep backups even after instance deletion
+  skip_final_snapshot       = false
+  final_snapshot_identifier = &quot;prod-app-db-final-${formatdate(&quot;YYYY-MM-DD&quot;, timestamp())}&quot;
+
+  # Performance Insights: shows you WHICH queries are slow
+  performance_insights_enabled          = true
+  performance_insights_retention_period = 7
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = [password]  # allow external rotation without drift
+  }
+}
+
+resource &quot;aws_security_group&quot; &quot;rds&quot; {
+  name   = &quot;rds-sg&quot;
+  vpc_id = module.vpc.vpc_id
+
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = &quot;tcp&quot;
+    security_groups = [module.eks.node_security_group_id]  # ONLY from EKS nodes
+    description     = &quot;PostgreSQL from EKS nodes&quot;
+  }
+  # NO outbound rules = default deny all outbound from the DB
+}
+</code></pre>
+<p><strong>Why <code>ignore_changes = [password]</code>:</strong> once the DB is created with an initial password, you'll likely set up automatic rotation via Secrets Manager rotation Lambda. That Lambda will change the password in both RDS and Secrets Manager. Without <code>ignore_changes</code>, Terraform would see the password in state differs from reality and try to change it back on the next <code>apply</code>.</p>
+<hr />
+<h1 id="chapter-10-what-exactly-happens-when-terraform-touches-a-kubernetes-cluster">CHAPTER 10 — WHAT EXACTLY HAPPENS WHEN TERRAFORM TOUCHES A KUBERNETES CLUSTER</h1>
+<h2 id="the-challenge">The Challenge</h2>
+<p>Terraform can provision a GKE/EKS cluster. But what about deploying apps TO that cluster? Terraform has a <code>kubernetes</code> provider that can create Deployments, Services, etc. But you generally <strong>shouldn't</strong> use it for app deployments. Here's why.</p>
+<h2 id="terraforms-kubernetes-provider-appropriate-vs-inappropriate-uses">Terraform's kubernetes Provider: Appropriate vs Inappropriate Uses</h2>
+<pre><code>APPROPRIATE (cluster-level, bootstrap):
+  ✓ Creating namespaces
+  ✓ Installing Argo CD via helm_release
+  ✓ Creating the root application for App-of-Apps
+  ✓ ClusterRoles that need to exist before anything else
+  ✓ StorageClasses
+
+INAPPROPRIATE (application-level):
+  ✗ Deploying your app's Deployment/Service/Ingress
+  ✗ Managing ConfigMaps that apps update
+  ✗ Anything that changes frequently
+</code></pre>
+<p><strong>Why not Terraform for apps?</strong></p>
+<ol>
+<li>
+<p><strong>Slow:</strong> Terraform plan re-reads every k8s resource it manages. 100 resources = 100 API calls on every plan, even if nothing changed.</p>
+</li>
+<li>
+<p><strong>No continuous reconciliation:</strong> Terraform only reconciles when you run it. If someone <code>kubectl edit</code>s a deployment, that drift persists until the next <code>apply</code>.</p>
+</li>
+<li>
+<p><strong>No health awareness:</strong> Terraform applies the manifest and considers it done. It doesn't know if the Deployment's pods are actually running or crashing. Argo CD does — it has health checks for every resource type.</p>
+</li>
+<li>
+<p><strong>Coupling:</strong> app changes require a Terraform pipeline run, not a git commit to the app config.</p>
+</li>
+</ol>
+<h2 id="the-right-split">The Right Split</h2>
+<pre><code>TERRAFORM DOES:
+  terraform apply
+    ├── Creates GKE/EKS cluster
+    ├── Creates node pools
+    ├── Creates IAM/Workload Identity
+    └── helm_release &quot;argocd&quot; { ... }   ← installs Argo CD
+
+ARGO CD DOES (from git):
+  ├── Installs cluster add-ons (ingress, cert-manager, etc.)
+  ├── Deploys all your applications
+  └── Continuously reconciles everything
+</code></pre>
+<h2 id="what-helm_release-actually-does">What helm_release Actually Does</h2>
+<pre><code class="language-hcl">resource &quot;helm_release&quot; &quot;argocd&quot; {
+  name             = &quot;argocd&quot;
+  repository       = &quot;https://argoproj.github.io/argo-helm&quot;
+  chart            = &quot;argo-cd&quot;
+  version          = &quot;7.7.0&quot;
+  namespace        = &quot;argocd&quot;
+  create_namespace = true
+
+  set {
+    name  = &quot;server.service.type&quot;
+    value = &quot;LoadBalancer&quot;
+  }
+
+  values = [yamlencode({
+    configs = {
+      params = {
+        &quot;server.insecure&quot; = false
+      }
+    }
+  })]
+
+  wait          = true    # wait until all pods are running before Terraform considers it done
+  wait_for_jobs = true    # wait for Helm hooks (Jobs) to complete
+  timeout       = 300     # seconds
+
+  lifecycle {
+    ignore_changes = [metadata]  # Helm adds metadata that changes on each deploy
+  }
+}
+</code></pre>
+<p>What <code>helm_release</code> does under the hood:</p>
+<pre><code>1. Downloads the Helm chart (tarball)
+2. Renders it with the provided values → list of Kubernetes manifests
+3. Applies those manifests to the cluster (like kubectl apply)
+4. Stores the rendered manifests in a Kubernetes Secret (Helm's own state)
+5. If wait=true: watches the manifests until all Pods are Running/Ready
+6. Stores the release info in Terraform state
+</code></pre>
+<hr />
+<h1 id="chapter-11-common-real-world-patterns">CHAPTER 11 — COMMON REAL-WORLD PATTERNS</h1>
+<h2 id="pattern-1-secrets-that-the-app-needs-at-runtime">Pattern 1: Secrets That the App Needs at Runtime</h2>
+<p><strong>Wrong way (common beginner mistake):</strong></p>
+<pre><code class="language-hcl">resource &quot;aws_ecs_task_definition&quot; &quot;app&quot; {
+  container_definitions = jsonencode([{
+    environment = [
+      { name = &quot;DB_PASSWORD&quot;, value = var.db_password }  # in state, in logs, in code
+    ]
+  }])
+}
+</code></pre>
+<p><strong>Right way:</strong></p>
+<pre><code class="language-hcl"># Store in Secrets Manager
+resource &quot;aws_secretsmanager_secret_version&quot; &quot;db&quot; {
+  secret_id     = aws_secretsmanager_secret.db.id
+  secret_string = jsonencode({ password = random_password.db.result })
+}
+
+# Reference it by ARN in the task definition
+resource &quot;aws_ecs_task_definition&quot; &quot;app&quot; {
+  container_definitions = jsonencode([{
+    secrets = [{
+      name      = &quot;DB_PASSWORD&quot;
+      valueFrom = &quot;${aws_secretsmanager_secret.db.arn}:password::&quot;
+      # ECS fetches this at task start, injects as env var, never logs it
+    }]
+  }])
+}
+</code></pre>
+<p><strong>On EKS:</strong> use the AWS Secrets Manager CSI driver (mounts secrets as files) or External Secrets Operator (creates k8s Secrets from SM). On GKE: use External Secrets Operator with Secret Manager backend.</p>
+<h2 id="pattern-2-multiple-aws-regions-gcp-regions">Pattern 2: Multiple AWS Regions / GCP Regions</h2>
+<pre><code class="language-hcl"># Provider aliases for multi-region
+provider &quot;aws&quot; {
+  alias  = &quot;us_east&quot;
+  region = &quot;us-east-1&quot;
+}
+
+provider &quot;aws&quot; {
+  alias  = &quot;eu_west&quot;
+  region = &quot;eu-west-1&quot;
+}
+
+# Deploy the same module to two regions
+module &quot;us&quot; {
+  source    = &quot;./modules/webapp&quot;
+  providers = { aws = aws.us_east }
+  env       = &quot;prod-us&quot;
+}
+
+module &quot;eu&quot; {
+  source    = &quot;./modules/webapp&quot;
+  providers = { aws = aws.eu_west }
+  env       = &quot;prod-eu&quot;
+}
+</code></pre>
+<h2 id="pattern-3-conditional-resources-feature-flags-in-hcl">Pattern 3: Conditional Resources (Feature Flags in HCL)</h2>
+<pre><code class="language-hcl">variable &quot;enable_waf&quot; {
+  type    = bool
+  default = true
+}
+
+variable &quot;environment&quot; {
+  type    = string
+}
+
+# WAF only in production
+resource &quot;aws_wafv2_web_acl&quot; &quot;main&quot; {
+  count = var.environment == &quot;prod&quot; &amp;&amp; var.enable_waf ? 1 : 0
+  # ...
+}
+
+# Reference it safely
+resource &quot;aws_alb&quot; &quot;main&quot; {
+  # ...
+}
+
+resource &quot;aws_wafv2_web_acl_association&quot; &quot;main&quot; {
+  count        = var.environment == &quot;prod&quot; &amp;&amp; var.enable_waf ? 1 : 0
+  resource_arn = aws_alb.main.arn
+  web_acl_arn  = aws_wafv2_web_acl.main[0].arn
+}
+</code></pre>
+<h2 id="pattern-4-terraform_remote_state-cross-stack-references">Pattern 4: terraform_remote_state (Cross-Stack References)</h2>
+<p>When your networking is in one state file and your app is in another:</p>
+<pre><code class="language-hcl"># In environments/prod/app/main.tf
+# Read outputs from the networking stack
+data &quot;terraform_remote_state&quot; &quot;networking&quot; {
+  backend = &quot;s3&quot;
+  config = {
+    bucket = &quot;my-terraform-state&quot;
+    key    = &quot;prod/networking/terraform.tfstate&quot;
+    region = &quot;us-east-1&quot;
+  }
+}
+
+# Use those outputs
+resource &quot;aws_instance&quot; &quot;app&quot; {
+  subnet_id = data.terraform_remote_state.networking.outputs.private_subnet_ids[0]
+  vpc_security_group_ids = [data.terraform_remote_state.networking.outputs.app_sg_id]
+}
+</code></pre>
+<p><strong>Alternative (often better):</strong> use SSM Parameter Store or GCP Secret Manager to publish outputs. The networking stack writes values there; the app stack reads them. Looser coupling — you can change one without the other re-reading state.</p>
+<hr />
+<h1 id="chapter-12-terraform-import-bringing-existing-resources-under-management">CHAPTER 12 — TERRAFORM IMPORT: BRINGING EXISTING RESOURCES UNDER MANAGEMENT</h1>
+<h2 id="the-scenario">The Scenario</h2>
+<p>Someone created an S3 bucket by hand. You want Terraform to manage it now without destroying and recreating it.</p>
+<pre><code class="language-bash"># Step 1: Write the resource block in your .tf file first
+# (Terraform needs the resource definition before it can import)
+
+# Step 2: Import the existing resource into state
+terraform import aws_s3_bucket.legacy my-existing-bucket-name
+
+# Step 3: Run plan — Terraform will show differences between
+# your .tf file and what's actually configured.
+# Edit your .tf file to match (or configure the resource to match your .tf)
+terraform plan
+
+# Step 4: Apply to reconcile any differences
+terraform apply
+</code></pre>
+<p><strong>Import blocks (modern way, TF 1.5+):</strong></p>
+<pre><code class="language-hcl">import {
+  to = aws_s3_bucket.legacy
+  id = &quot;my-existing-bucket-name&quot;
+}
+
+resource &quot;aws_s3_bucket&quot; &quot;legacy&quot; {
+  bucket = &quot;my-existing-bucket-name&quot;
+  # ... Terraform can now generate this block automatically
+}
+</code></pre>
+<pre><code class="language-bash">terraform plan -generate-config-out=generated.tf
+# Terraform writes the resource block by reading the real resource
+# You review generated.tf, clean it up, copy it to your main .tf
+</code></pre>
+<p><strong><code>terraform import</code> does NOT:</strong>
+- Modify the real resource
+- Know what your <code>.tf</code> file says
+- Validate that your <code>.tf</code> matches reality (that's what <code>plan</code> is for)</p>
+<hr />
+<h1 id="chapter-13-debugging-terraform">CHAPTER 13 — DEBUGGING TERRAFORM</h1>
+<h2 id="reading-error-messages">Reading Error Messages</h2>
+<pre><code>Error: Error creating Instance: googleapi: Error 409: The resource
+'projects/my-project/zones/us-central1-a/instances/my-instance'
+already exists
+
+# Meaning: something with this name already exists outside Terraform's state
+# Fix: terraform import google_compute_instance.x my-project/us-central1-a/my-instance
+</code></pre>
+<pre><code>Error: Error acquiring the state lock
+Lock Info:
+  ID:        abc123
+  Path:      terraform.tfstate
+  Operation: apply
+  Who:       alice@machine
+  Created:   2024-01-15 14:23:11
+
+# Meaning: another apply is running (or crashed while holding the lock)
+# Fix (ONLY if you're sure no apply is running):
+# terraform force-unlock abc123
+</code></pre>
+<pre><code>Error: Provider configuration not present
+To work with module.vpc.aws_vpc.this its original provider
+configuration at provider[&quot;registry.terraform.io/hashicorp/aws&quot;] is
+required, but it has been removed.
+
+# Meaning: you removed a provider block that still has resources in state
+# Fix: add the provider back, or terraform state rm the resources first
+</code></pre>
+<h2 id="useful-debug-flags">Useful Debug Flags</h2>
+<pre><code class="language-bash"># See the full plan details in JSON
+terraform plan -out=plan.bin
+terraform show -json plan.bin | jq '.resource_changes[] | select(.change.actions | contains([&quot;delete&quot;]))'
+
+# Verbose API logging (shows every HTTP request to the cloud)
+TF_LOG=DEBUG terraform plan 2&gt;&amp;1 | grep -E &quot;(Request|Response|Error)&quot;
+
+# See exactly which resource Terraform is refreshing
+TF_LOG=INFO terraform plan
+
+# Plan for a specific resource only
+terraform plan -target=aws_db_instance.main
+
+# See the current state of one resource
+terraform state show aws_db_instance.main
+
+# Validate HCL without contacting the cloud
+terraform validate
+</code></pre>
+<hr />
+<h1 id="chapter-14-the-complete-checklist">CHAPTER 14 — THE COMPLETE CHECKLIST</h1>
+<h2 id="before-you-write-any-hcl">Before You Write Any HCL</h2>
+<ul>
+<li><span class="cb"></span>Do I have a state bucket? Is it versioned + encrypted?</li>
+<li><span class="cb"></span>Are my provider credentials set? (<code>aws sts get-caller-identity</code> or <code>gcloud auth list</code>)</li>
+<li><span class="cb"></span>Do I have budget alerts set on this account?</li>
+<li><span class="cb"></span>Do I know what environment this is? (dev/staging/prod)</li>
+<li><span class="cb"></span>Is the state key unique to this project+environment?</li>
+</ul>
+<h2 id="before-every-apply">Before Every <code>apply</code></h2>
+<ul>
+<li><span class="cb"></span>Did I read the entire plan output?</li>
+<li><span class="cb"></span>Are there any <code>-/+</code> (replace) operations? Do I understand what causes them?</li>
+<li><span class="cb"></span>Are there any <code>destroy</code> operations I didn't expect?</li>
+<li><span class="cb"></span>If this is prod: is there a second pair of eyes on the plan?</li>
+<li><span class="cb"></span>Do the outputs make sense?</li>
+</ul>
+<h2 id="before-merging-terraform-code">Before Merging Terraform Code</h2>
+<ul>
+<li><span class="cb"></span><code>terraform fmt</code> passes?</li>
+<li><span class="cb"></span><code>terraform validate</code> passes?</li>
+<li><span class="cb"></span>Does the PR include the plan output so the reviewer can see what changes?</li>
+<li><span class="cb"></span>Are resources that shouldn't be destroyed protected with <code>prevent_destroy</code>?</li>
+<li><span class="cb"></span>Are secrets handled properly (not in code, not in unencrypted state)?</li>
+<li><span class="cb"></span>Are all resources tagged with at least Owner + Environment?</li>
+</ul>
+<h2 id="the-destroy-discipline-for-sandboxes">The Destroy Discipline (For Sandboxes)</h2>
+<p>At the end of every learning session:</p>
+<pre><code class="language-bash">terraform destroy    # type 'yes' when prompted
+# Verify in the cloud console that nothing is running
+</code></pre>
+<p>A single forgotten NAT gateway costs ~$32/month. A GPU instance left running overnight can cost hundreds. <strong>Treat <code>destroy</code> as part of every learning exercise.</strong></p>
+<hr />
+<p><em>The pattern behind every piece of Terraform is simple: declare what you want, let Terraform figure out how. The complexity you feel early on is the cloud's complexity — Terraform is just making it legible, versionable, and repeatable. Every concept in this guide flows from the three-world model in Chapter 1. When something confuses you, go back there.</em></p>
+</div>
+</main>
+</div>
+<button id="top" aria-label="Back to top">↑</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  // HCL grammar
+  try{
+    hljs.registerLanguage('hcl',function(h){
+      return{aliases:['terraform','tf'],
+        keywords:{keyword:'resource variable module data output provider terraform locals for_each count depends_on lifecycle dynamic content backend required_providers required_version',literal:'true false null'},
+        contains:[h.HASH_COMMENT_MODE,{className:'comment',begin:'//',end:'$'},
+          {className:'string',begin:'"',end:'"',contains:[{className:'subst',begin:'\\$\\{',end:'\\}'}]},
+          {className:'string',begin:'<<-?\\w+',end:'^\\s*\\w+'},
+          {className:'number',begin:'\\b\\d+(\\.\\d+)?'},
+          {className:'attr',begin:'[\\w-]+\\s*(?==)'},
+          {className:'built_in',begin:'\\b(var|local|module|data|each|count|path|self|random_password|jsonencode|yamlencode|toset|tolist|merge|lookup|trimprefix|trimsuffix|cidrsubnet|formatdate|timestamp|format)\\b'}]};
+    });
+    hljs.registerLanguage('rego',function(h){
+      return{keywords:'package import default deny allow some not with as',
+        contains:[h.HASH_COMMENT_MODE,h.QUOTE_STRING_MODE,h.C_NUMBER_MODE]};
+    });
+  }catch(e){}
+
+  // wrap + highlight code blocks
+  document.querySelectorAll('main pre > code').forEach(code=>{
+    const pre=code.parentElement;
+    if(pre.closest('.cw')) return;
+    const lang=(code.className.match(/language-([\w-]+)/)||[])[1]||'';
+    const w=document.createElement('div'); w.className='cw';
+    const hd=document.createElement('div'); hd.className='ch2';
+    hd.innerHTML='<span class="dots"><i></i><i></i><i></i></span>'
+      +(lang?`<span class="clang">${lang}</span>`:'')
+      +'<button class="ccopy">copy</button>';
+    pre.before(w); w.append(hd,pre);
+    hd.querySelector('.ccopy').onclick=e=>{
+      navigator.clipboard.writeText(code.innerText).then(()=>{
+        e.target.textContent='✓ copied'; e.target.className='ccopy ok';
+        setTimeout(()=>{e.target.textContent='copy';e.target.className='ccopy'},1600);
+      });
+    };
+    try{hljs.highlightElement(code);}catch(e){}
+  });
+
+  // progress + back-to-top
+  const prog=document.getElementById('prog'), top=document.getElementById('top');
+  const onscroll=()=>{
+    const s=document.documentElement.scrollTop;
+    const h=document.documentElement.scrollHeight-innerHeight;
+    prog.style.width=(h>0?s/h*100:0)+'%';
+    top.classList.toggle('v',s>500);
+  };
+  addEventListener('scroll',onscroll,{passive:true}); onscroll();
+  top.onclick=()=>scrollTo({top:0,behavior:'smooth'});
+
+  // theme toggle (simple dark/light flip)
+  let light=false;
+  document.getElementById('tb').onclick=function(){
+    light=!light;
+    const d=document.documentElement;
+    if(light){
+      d.style.setProperty('--bg','#f6f8fa'); d.style.setProperty('--s1','#ffffff');
+      d.style.setProperty('--s2','#f0f4f8'); d.style.setProperty('--tx','#1c2333');
+      d.style.setProperty('--mu','#57606a'); d.style.setProperty('--bd','#d0d7de');
+      d.style.setProperty('--bd2','#e0e6ec'); d.style.setProperty('--cbg','#0d1117');
+      d.style.setProperty('--dm','#8c959f'); this.textContent='☀ dark';
+    } else {
+      ['--bg','--s1','--s2','--tx','--mu','--bd','--bd2','--cbg','--dm'].forEach(v=>d.style.removeProperty(v));
+      this.textContent='◐ light';
+    }
+  };
+
+  // sidebar search
+  const ss=document.getElementById('ss');
+  ss.oninput=()=>{
+    const q=ss.value.trim().toLowerCase();
+    document.querySelectorAll('details.ng').forEach(d=>{
+      let any=false;
+      d.querySelectorAll('.nl').forEach(a=>{
+        const h=!q||a.textContent.toLowerCase().includes(q);
+        a.parentElement.classList.toggle('nh',!h); if(h) any=true;
+      });
+      d.classList.toggle('nh',q&&!any&&!d.querySelector('summary').textContent.toLowerCase().includes(q));
+      if(q&&any) d.open=true;
+    });
+  };
+
+  // scroll spy
+  const links=[...document.querySelectorAll('.nl')];
+  const lmap={}; links.forEach(l=>lmap[l.getAttribute('href').slice(1)]=l);
+  new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.remove('on'));
+        const l=lmap[e.target.id];
+        if(l){l.classList.add('on');l.closest('details')&&(l.closest('details').open=true);}
+      }
+    });
+  },{rootMargin:'-54px 0px -82% 0px',threshold:0})
+  .observe(...document.querySelectorAll('main h1[id],main h2[id]'));
+
+  // fix: observe all, not spread
+  document.querySelectorAll('main h1[id],main h2[id]').forEach(h=>{
+    new IntersectionObserver(es=>{
+      es.forEach(e=>{
+        if(e.isIntersecting){
+          links.forEach(l=>l.classList.remove('on'));
+          const l=lmap[e.target.id];
+          if(l){l.classList.add('on');l.closest('details')&&(l.closest('details').open=true);}
+        }
+      });
+    },{rootMargin:'-54px 0px -82% 0px',threshold:0}).observe(h);
+  });
+
+  // mobile drawer
+  const side=document.getElementById('side'), veil=document.getElementById('veil'), mb=document.getElementById('mb');
+  const tog=o=>{side.classList.toggle('open',o);veil.classList.toggle('v',o)};
+  mb.onclick=()=>tog(!side.classList.contains('open'));
+  veil.onclick=()=>tog(false);
+  links.forEach(l=>l.addEventListener('click',()=>{if(innerWidth<=960)tog(false)}));
+});
+</script>
+</body></html>
